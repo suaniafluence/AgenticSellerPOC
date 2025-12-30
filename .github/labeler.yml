@@ -1,41 +1,53 @@
-# Configuration for PR labeler
+# Configuration for PR labeler (v5+ format)
 
 # Documentation changes
 documentation:
-  - '**/*.md'
-  - 'docs/**/*'
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.md'
+          - 'docs/**/*'
 
 # CI/CD changes
 ci/cd:
-  - '.github/workflows/**/*'
-  - '.github/actions/**/*'
-  - 'Dockerfile'
-  - 'docker-compose.yml'
-  - '.dockerignore'
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/workflows/**/*'
+          - '.github/actions/**/*'
+          - 'Dockerfile'
+          - 'docker-compose.yml'
+          - '.dockerignore'
 
 # Python code
 python:
-  - '**/*.py'
-  - 'pyproject.toml'
-  - 'setup.py'
-  - 'setup.cfg'
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.py'
+          - 'pyproject.toml'
+          - 'setup.py'
+          - 'setup.cfg'
 
 # Tests
 tests:
-  - 'tests/**/*'
-  - '**/*test*.py'
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'tests/**/*'
+          - '**/*test*.py'
 
 # Dependencies
 dependencies:
-  - 'requirements*.txt'
-  - 'pyproject.toml'
-  - 'setup.py'
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'requirements*.txt'
+          - 'pyproject.toml'
+          - 'setup.py'
 
 # Configuration
 configuration:
-  - '**/*.yml'
-  - '**/*.yaml'
-  - '**/*.toml'
-  - '**/*.ini'
-  - '**/*.cfg'
-  - '.env.example'
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.yml'
+          - '**/*.yaml'
+          - '**/*.toml'
+          - '**/*.ini'
+          - '**/*.cfg'
+          - '.env.example'
