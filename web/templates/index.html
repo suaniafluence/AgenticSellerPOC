@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IAfluence - Agent Monitor</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .sidebar {
+            background: var(--bg-card);
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-item {
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(99, 102, 241, 0.1);
+            border-left: 3px solid var(--primary);
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(99, 102, 241, 0.1) 100%);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .badge-hot { background: #ef4444; }
+        .badge-warm { background: #f59e0b; }
+        .badge-cold { background: #3b82f6; }
+
+        .log-entry {
+            border-left: 3px solid var(--primary);
+            transition: all 0.2s;
+        }
+
+        .log-entry:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        textarea, input, select {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-primary);
+        }
+
+        textarea:focus, input:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+
+        .connection-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .connection-status.connected { background: var(--success); }
+        .connection-status.disconnected { background: var(--danger); }
+
+        .tab-btn {
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .message-user {
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 12px 12px 0 12px;
+        }
+
+        .message-assistant {
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 12px 12px 12px 0;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading { animation: pulse 2s infinite; }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="sidebar w-64 flex-shrink-0 flex flex-col">
+            <div class="p-6 border-b border-gray-700">
+                <h1 class="text-xl font-bold text-indigo-400">
+                    <i class="fas fa-robot mr-2"></i>IAfluence
+                </h1>
+                <p class="text-sm text-gray-400">Agent Monitor</p>
+            </div>
+
+            <nav class="flex-1 py-4">
+                <a href="#" class="nav-item active flex items-center px-6 py-3 text-sm" onclick="showSection('dashboard')">
+                    <i class="fas fa-chart-line w-5 mr-3"></i>Dashboard
+                </a>
+                <a href="#" class="nav-item flex items-center px-6 py-3 text-sm" onclick="showSection('sessions')">
+                    <i class="fas fa-comments w-5 mr-3"></i>Sessions
+                </a>
+                <a href="#" class="nav-item flex items-center px-6 py-3 text-sm" onclick="showSection('logs')">
+                    <i class="fas fa-list-alt w-5 mr-3"></i>Logs Agents
+                </a>
+                <a href="#" class="nav-item flex items-center px-6 py-3 text-sm" onclick="showSection('blackboard')">
+                    <i class="fas fa-brain w-5 mr-3"></i>Blackboard
+                </a>
+                <a href="#" class="nav-item flex items-center px-6 py-3 text-sm" onclick="showSection('prompts')">
+                    <i class="fas fa-edit w-5 mr-3"></i>Prompts
+                </a>
+                <a href="#" class="nav-item flex items-center px-6 py-3 text-sm" onclick="showSection('config')">
+                    <i class="fas fa-cog w-5 mr-3"></i>Configuration
+                </a>
+                <a href="#" class="nav-item flex items-center px-6 py-3 text-sm" onclick="showSection('prospects')">
+                    <i class="fas fa-user-plus w-5 mr-3"></i>Nouveau Prospect
+                </a>
+            </nav>
+
+            <div class="p-4 border-t border-gray-700">
+                <div class="text-xs text-gray-500">
+                    <i class="fas fa-circle text-green-400 mr-1"></i>
+                    Système actif
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-auto">
+            <div class="p-6">
+                <!-- Dashboard Section -->
+                <section id="section-dashboard" class="section">
+                    <h2 class="text-2xl font-bold mb-6">Dashboard</h2>
+
+                    <!-- Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="stat-card card p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-400">Sessions totales</p>
+                                    <p class="text-2xl font-bold" id="stat-total-sessions">0</p>
+                                </div>
+                                <i class="fas fa-users text-2xl text-indigo-400"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card card p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-400">Sessions actives</p>
+                                    <p class="text-2xl font-bold" id="stat-active-sessions">0</p>
+                                </div>
+                                <i class="fas fa-play-circle text-2xl text-green-400"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card card p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-400">Conversions</p>
+                                    <p class="text-2xl font-bold" id="stat-conversions">0</p>
+                                </div>
+                                <i class="fas fa-check-circle text-2xl text-yellow-400"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card card p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-400">Score moyen</p>
+                                    <p class="text-2xl font-bold" id="stat-avg-score">0</p>
+                                </div>
+                                <i class="fas fa-star text-2xl text-purple-400"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Sessions -->
+                    <div class="card p-4">
+                        <h3 class="text-lg font-semibold mb-4">Sessions récentes</h3>
+                        <div id="recent-sessions" class="space-y-2">
+                            <p class="text-gray-500 text-center py-4">Chargement...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sessions Section -->
+                <section id="section-sessions" class="section hidden">
+                    <h2 class="text-2xl font-bold mb-6">Sessions</h2>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Session List -->
+                        <div class="card p-4">
+                            <h3 class="text-lg font-semibold mb-4">Liste des sessions</h3>
+                            <div id="session-list" class="space-y-2 max-h-96 overflow-y-auto">
+                                <p class="text-gray-500 text-center py-4">Chargement...</p>
+                            </div>
+                        </div>
+
+                        <!-- Session Detail -->
+                        <div class="lg:col-span-2 card p-4">
+                            <h3 class="text-lg font-semibold mb-4">Détail de la session</h3>
+                            <div id="session-detail" class="space-y-4">
+                                <p class="text-gray-500 text-center py-4">Sélectionnez une session</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Logs Section -->
+                <section id="section-logs" class="section hidden">
+                    <h2 class="text-2xl font-bold mb-6">Logs des Agents</h2>
+
+                    <div class="flex gap-4 mb-4">
+                        <select id="log-filter-agent" class="rounded px-3 py-2" onchange="loadLogs()">
+                            <option value="">Tous les agents</option>
+                            <option value="classifier">Classifier</option>
+                            <option value="seller">Seller</option>
+                            <option value="negotiator">Negotiator</option>
+                            <option value="supervisor">Supervisor</option>
+                            <option value="crm">CRM</option>
+                        </select>
+                        <button onclick="loadLogs()" class="btn-primary px-4 py-2 rounded">
+                            <i class="fas fa-refresh mr-2"></i>Rafraîchir
+                        </button>
+                    </div>
+
+                    <div class="card p-4">
+                        <div id="logs-container" class="space-y-2 max-h-screen overflow-y-auto">
+                            <p class="text-gray-500 text-center py-4">Chargement...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Blackboard Section -->
+                <section id="section-blackboard" class="section hidden">
+                    <h2 class="text-2xl font-bold mb-6">Blackboard - Mémoire Partagée</h2>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Stats -->
+                        <div class="card p-4">
+                            <h3 class="text-lg font-semibold mb-4">Statistiques globales</h3>
+                            <div id="blackboard-stats" class="space-y-3">
+                                <p class="text-gray-500 text-center py-4">Chargement...</p>
+                            </div>
+                        </div>
+
+                        <!-- Insights -->
+                        <div class="card p-4">
+                            <h3 class="text-lg font-semibold mb-4">Insights collectés</h3>
+                            <div id="blackboard-insights" class="space-y-2 max-h-96 overflow-y-auto">
+                                <p class="text-gray-500 text-center py-4">Chargement...</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Prompts Section -->
+                <section id="section-prompts" class="section hidden">
+                    <h2 class="text-2xl font-bold mb-6">Gestion des Prompts</h2>
+
+                    <div class="flex gap-2 mb-4 border-b border-gray-700">
+                        <button class="tab-btn active px-4 py-2" onclick="selectPromptTab('classifier')">Classifier</button>
+                        <button class="tab-btn px-4 py-2" onclick="selectPromptTab('seller')">Seller</button>
+                        <button class="tab-btn px-4 py-2" onclick="selectPromptTab('negotiator')">Negotiator</button>
+                        <button class="tab-btn px-4 py-2" onclick="selectPromptTab('supervisor')">Supervisor</button>
+                        <button class="tab-btn px-4 py-2" onclick="selectPromptTab('crm')">CRM</button>
+                    </div>
+
+                    <div class="card p-4">
+                        <div class="mb-4">
+                            <label class="block text-sm text-gray-400 mb-2">System Prompt - <span id="current-prompt-agent">classifier</span></label>
+                            <textarea id="prompt-editor" class="w-full h-96 p-4 rounded font-mono text-sm" placeholder="Chargement du prompt..."></textarea>
+                        </div>
+                        <div class="flex justify-end gap-2">
+                            <button onclick="resetPrompt()" class="px-4 py-2 rounded bg-gray-600 hover:bg-gray-500">
+                                <i class="fas fa-undo mr-2"></i>Réinitialiser
+                            </button>
+                            <button onclick="savePrompt()" class="btn-primary px-4 py-2 rounded">
+                                <i class="fas fa-save mr-2"></i>Sauvegarder
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Configuration Section -->
+                <section id="section-config" class="section hidden">
+                    <h2 class="text-2xl font-bold mb-6">Configuration</h2>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- LLM Config -->
+                        <div class="card p-4">
+                            <h3 class="text-lg font-semibold mb-4">
+                                <i class="fas fa-microchip mr-2"></i>Configuration LLM
+                            </h3>
+
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm text-gray-400 mb-2">Provider</label>
+                                    <select id="llm-provider" class="w-full rounded px-3 py-2" onchange="loadModelsForProvider()">
+                                        <option value="openai">OpenAI</option>
+                                        <option value="anthropic">Anthropic (Claude)</option>
+                                        <option value="grok">Grok (xAI)</option>
+                                        <option value="deepseek">DeepSeek</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm text-gray-400 mb-2">Modèle</label>
+                                    <select id="llm-model" class="w-full rounded px-3 py-2">
+                                        <option value="">Sélectionnez un modèle</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm text-gray-400 mb-2">Température: <span id="temp-value">0.7</span></label>
+                                    <input type="range" id="llm-temperature" class="w-full" min="0" max="1" step="0.1" value="0.7" oninput="document.getElementById('temp-value').textContent = this.value">
+                                </div>
+
+                                <button onclick="saveConfig()" class="btn-primary w-full py-2 rounded">
+                                    <i class="fas fa-save mr-2"></i>Sauvegarder Configuration LLM
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- MCP Connections -->
+                        <div class="card p-4">
+                            <h3 class="text-lg font-semibold mb-4">
+                                <i class="fas fa-plug mr-2"></i>Connexions MCP
+                            </h3>
+
+                            <div class="space-y-4" id="mcp-connections">
+                                <!-- HubSpot -->
+                                <div class="flex items-center justify-between p-3 bg-black bg-opacity-20 rounded">
+                                    <div class="flex items-center">
+                                        <div class="connection-status disconnected mr-3" id="status-hubspot"></div>
+                                        <div>
+                                            <p class="font-medium">HubSpot CRM</p>
+                                            <p class="text-xs text-gray-400">Synchronisation contacts</p>
+                                        </div>
+                                    </div>
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="checkbox" id="mcp-hubspot" class="mr-2" onchange="toggleMCP('hubspot')">
+                                        <span class="text-sm">Actif</span>
+                                    </label>
+                                </div>
+
+                                <!-- Gmail -->
+                                <div class="flex items-center justify-between p-3 bg-black bg-opacity-20 rounded">
+                                    <div class="flex items-center">
+                                        <div class="connection-status disconnected mr-3" id="status-gmail"></div>
+                                        <div>
+                                            <p class="font-medium">Gmail</p>
+                                            <p class="text-xs text-gray-400">Envoi d'emails</p>
+                                        </div>
+                                    </div>
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="checkbox" id="mcp-gmail" class="mr-2" onchange="toggleMCP('gmail')">
+                                        <span class="text-sm">Actif</span>
+                                    </label>
+                                </div>
+
+                                <!-- Google Drive -->
+                                <div class="flex items-center justify-between p-3 bg-black bg-opacity-20 rounded">
+                                    <div class="flex items-center">
+                                        <div class="connection-status disconnected mr-3" id="status-google_drive"></div>
+                                        <div>
+                                            <p class="font-medium">Google Drive</p>
+                                            <p class="text-xs text-gray-400">Stockage documents</p>
+                                        </div>
+                                    </div>
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="checkbox" id="mcp-google_drive" class="mr-2" onchange="toggleMCP('google_drive')">
+                                        <span class="text-sm">Actif</span>
+                                    </label>
+                                </div>
+
+                                <!-- Web -->
+                                <div class="flex items-center justify-between p-3 bg-black bg-opacity-20 rounded">
+                                    <div class="flex items-center">
+                                        <div class="connection-status connected mr-3" id="status-web"></div>
+                                        <div>
+                                            <p class="font-medium">Accès Web</p>
+                                            <p class="text-xs text-gray-400">Recherche internet</p>
+                                        </div>
+                                    </div>
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="checkbox" id="mcp-web" class="mr-2" checked onchange="toggleMCP('web')">
+                                        <span class="text-sm">Actif</span>
+                                    </label>
+                                </div>
+
+                                <!-- LinkedIn -->
+                                <div class="flex items-center justify-between p-3 bg-black bg-opacity-20 rounded">
+                                    <div class="flex items-center">
+                                        <div class="connection-status disconnected mr-3" id="status-linkedin"></div>
+                                        <div>
+                                            <p class="font-medium">LinkedIn</p>
+                                            <p class="text-xs text-gray-400">Prospection sociale</p>
+                                        </div>
+                                    </div>
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="checkbox" id="mcp-linkedin" class="mr-2" onchange="toggleMCP('linkedin')">
+                                        <span class="text-sm">Actif</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button onclick="saveMCPConfig()" class="btn-primary w-full py-2 rounded mt-4">
+                                <i class="fas fa-save mr-2"></i>Sauvegarder Connexions
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Prospects Section -->
+                <section id="section-prospects" class="section hidden">
+                    <h2 class="text-2xl font-bold mb-6">Nouveau Prospect</h2>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Form -->
+                        <div class="card p-6">
+                            <h3 class="text-lg font-semibold mb-4">Informations du prospect</h3>
+
+                            <form id="prospect-form" class="space-y-4">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm text-gray-400 mb-2">Nom complet *</label>
+                                        <input type="text" id="prospect-name" class="w-full rounded px-3 py-2" required placeholder="Jean Dupont">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm text-gray-400 mb-2">Entreprise *</label>
+                                        <input type="text" id="prospect-company" class="w-full rounded px-3 py-2" required placeholder="Acme Corp">
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm text-gray-400 mb-2">Email *</label>
+                                        <input type="email" id="prospect-email" class="w-full rounded px-3 py-2" required placeholder="jean@acme.fr">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm text-gray-400 mb-2">Téléphone</label>
+                                        <input type="tel" id="prospect-phone" class="w-full rounded px-3 py-2" placeholder="06 12 34 56 78">
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm text-gray-400 mb-2">Secteur</label>
+                                        <select id="prospect-sector" class="w-full rounded px-3 py-2">
+                                            <option value="industrie">Industrie</option>
+                                            <option value="services">Services</option>
+                                            <option value="commerce">Commerce</option>
+                                            <option value="finance">Finance</option>
+                                            <option value="sante">Santé</option>
+                                            <option value="tech">Tech</option>
+                                            <option value="immobilier">Immobilier</option>
+                                            <option value="autre" selected>Autre</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm text-gray-400 mb-2">Taille entreprise</label>
+                                        <select id="prospect-size" class="w-full rounded px-3 py-2">
+                                            <option value="startup">Startup (1-19)</option>
+                                            <option value="pme" selected>PME (20-249)</option>
+                                            <option value="eti">ETI (250-4999)</option>
+                                            <option value="grand_compte">Grand Compte (5000+)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="checkbox" id="prospect-decision-maker" class="mr-2">
+                                        <span class="text-sm">Décideur (DG, DSI, DRH...)</span>
+                                    </label>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm text-gray-400 mb-2">Problématiques (séparées par des virgules)</label>
+                                    <input type="text" id="prospect-pain-points" class="w-full rounded px-3 py-2" placeholder="Shadow IA, gouvernance, formation...">
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm text-gray-400 mb-2">Centres d'intérêt (séparés par des virgules)</label>
+                                    <input type="text" id="prospect-interests" class="w-full rounded px-3 py-2" placeholder="automatisation, productivité...">
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm text-gray-400 mb-2">Notes additionnelles</label>
+                                    <textarea id="prospect-notes" class="w-full rounded px-3 py-2 h-24" placeholder="Contexte supplémentaire..."></textarea>
+                                </div>
+
+                                <button type="submit" class="btn-primary w-full py-3 rounded text-lg">
+                                    <i class="fas fa-user-plus mr-2"></i>Créer le prospect et démarrer le processus
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Result -->
+                        <div class="card p-6">
+                            <h3 class="text-lg font-semibold mb-4">Résultat</h3>
+                            <div id="prospect-result" class="space-y-4">
+                                <p class="text-gray-500 text-center py-8">
+                                    <i class="fas fa-inbox text-4xl mb-4 block"></i>
+                                    Remplissez le formulaire pour créer un nouveau prospect
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // State
+        let currentSection = 'dashboard';
+        let currentPromptAgent = 'classifier';
+        let llmModels = {};
+        let config = {};
+
+        // API Base
+        const API_BASE = '';
+
+        // Section Navigation
+        function showSection(section) {
+            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`section-${section}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            event.target.closest('.nav-item').classList.add('active');
+
+            currentSection = section;
+
+            // Load section-specific data
+            switch(section) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'sessions':
+                    loadSessions();
+                    break;
+                case 'logs':
+                    loadLogs();
+                    break;
+                case 'blackboard':
+                    loadBlackboard();
+                    break;
+                case 'prompts':
+                    loadPrompt(currentPromptAgent);
+                    break;
+                case 'config':
+                    loadConfig();
+                    break;
+            }
+        }
+
+        // Dashboard
+        async function loadDashboard() {
+            try {
+                const response = await fetch(`${API_BASE}/api/blackboard`);
+                const data = await response.json();
+
+                document.getElementById('stat-total-sessions').textContent = data.total_sessions;
+                document.getElementById('stat-active-sessions').textContent = data.active_sessions;
+                document.getElementById('stat-conversions').textContent = data.total_conversions;
+                document.getElementById('stat-avg-score').textContent = data.avg_lead_score.toFixed(1);
+
+                // Recent sessions
+                const sessions = Object.values(data.sessions).slice(0, 5);
+                const container = document.getElementById('recent-sessions');
+
+                if (sessions.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-center py-4">Aucune session</p>';
+                } else {
+                    container.innerHTML = sessions.map(s => `
+                        <div class="flex items-center justify-between p-3 bg-black bg-opacity-20 rounded">
+                            <div>
+                                <p class="font-medium">${s.session_id.substring(0, 8)}...</p>
+                                <p class="text-xs text-gray-400">Score: ${s.lead_score} | Messages: ${s.message_count}</p>
+                            </div>
+                            <span class="px-2 py-1 rounded text-xs ${getBadgeClass(s.lead_type)}">${s.lead_type || 'N/A'}</span>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        function getBadgeClass(leadType) {
+            switch(leadType) {
+                case 'chaud': return 'badge-hot';
+                case 'tiede': return 'badge-warm';
+                case 'froid': return 'badge-cold';
+                default: return 'bg-gray-600';
+            }
+        }
+
+        // Sessions
+        async function loadSessions() {
+            try {
+                const response = await fetch(`${API_BASE}/api/sessions`);
+                const sessions = await response.json();
+
+                const container = document.getElementById('session-list');
+
+                if (sessions.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-center py-4">Aucune session</p>';
+                } else {
+                    container.innerHTML = sessions.map(s => `
+                        <div class="p-3 bg-black bg-opacity-20 rounded cursor-pointer hover:bg-opacity-40 transition" onclick="loadSessionDetail('${s.session_id}')">
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium">${s.session_id.substring(0, 8)}...</span>
+                                <span class="px-2 py-1 rounded text-xs ${getBadgeClass(s.lead_type)}">${s.lead_type || 'N/A'}</span>
+                            </div>
+                            <div class="text-xs text-gray-400 mt-1">
+                                Score: ${s.lead_score} | ${s.message_count} messages
+                                ${s.converted ? '<span class="text-green-400 ml-2">Converti</span>' : ''}
+                                ${s.escalated ? '<span class="text-yellow-400 ml-2">Escaladé</span>' : ''}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading sessions:', error);
+            }
+        }
+
+        async function loadSessionDetail(sessionId) {
+            try {
+                const response = await fetch(`${API_BASE}/api/sessions/${sessionId}`);
+                const session = await response.json();
+
+                const container = document.getElementById('session-detail');
+                container.innerHTML = `
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="p-3 bg-black bg-opacity-20 rounded">
+                            <p class="text-xs text-gray-400">Lead Score</p>
+                            <p class="text-2xl font-bold">${session.lead_score}</p>
+                        </div>
+                        <div class="p-3 bg-black bg-opacity-20 rounded">
+                            <p class="text-xs text-gray-400">Type</p>
+                            <p class="text-2xl font-bold">${session.lead_type || 'N/A'}</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4 class="font-semibold mb-2">Lead Info</h4>
+                        <div class="p-3 bg-black bg-opacity-20 rounded text-sm">
+                            <p><strong>Secteur:</strong> ${session.lead_info.sector || 'N/A'}</p>
+                            <p><strong>Taille:</strong> ${session.lead_info.company_size || 'N/A'}</p>
+                            <p><strong>Décideur:</strong> ${session.lead_info.decision_maker ? 'Oui' : 'Non'}</p>
+                            <p><strong>Problématiques:</strong> ${(session.lead_info.pain_points || []).join(', ') || 'N/A'}</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4 class="font-semibold mb-2">Conversation</h4>
+                        <div class="space-y-2 max-h-64 overflow-y-auto">
+                            ${session.messages.map(m => `
+                                <div class="p-3 ${m.role === 'user' ? 'message-user' : 'message-assistant'}">
+                                    <p class="text-xs text-gray-400 mb-1">${m.role.toUpperCase()} ${m.metadata?.agent ? `(${m.metadata.agent})` : ''}</p>
+                                    <p class="text-sm">${m.content}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    ${session.key_insights.length > 0 ? `
+                        <div>
+                            <h4 class="font-semibold mb-2">Insights</h4>
+                            <ul class="list-disc list-inside text-sm">
+                                ${session.key_insights.map(i => `<li>${i}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                `;
+            } catch (error) {
+                console.error('Error loading session detail:', error);
+            }
+        }
+
+        // Logs
+        async function loadLogs() {
+            try {
+                const agent = document.getElementById('log-filter-agent').value;
+                let url = `${API_BASE}/api/logs?limit=100`;
+                if (agent) url += `&agent=${agent}`;
+
+                const response = await fetch(url);
+                const logs = await response.json();
+
+                const container = document.getElementById('logs-container');
+
+                if (logs.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-center py-4">Aucun log</p>';
+                } else {
+                    container.innerHTML = logs.reverse().map(log => `
+                        <div class="log-entry p-3 bg-black bg-opacity-20 rounded">
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium text-indigo-400">${log.agent_name}</span>
+                                <span class="text-xs text-gray-400">${new Date(log.timestamp).toLocaleString()}</span>
+                            </div>
+                            <p class="text-sm mt-1">${log.action}</p>
+                            <p class="text-xs text-gray-500">Session: ${log.session_id.substring(0, 8)}...</p>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading logs:', error);
+            }
+        }
+
+        // Blackboard
+        async function loadBlackboard() {
+            try {
+                const response = await fetch(`${API_BASE}/api/blackboard`);
+                const data = await response.json();
+
+                // Stats
+                document.getElementById('blackboard-stats').innerHTML = `
+                    <div class="flex justify-between p-2 bg-black bg-opacity-20 rounded">
+                        <span>Total Sessions</span>
+                        <span class="font-bold">${data.total_sessions}</span>
+                    </div>
+                    <div class="flex justify-between p-2 bg-black bg-opacity-20 rounded">
+                        <span>Sessions Actives</span>
+                        <span class="font-bold text-green-400">${data.active_sessions}</span>
+                    </div>
+                    <div class="flex justify-between p-2 bg-black bg-opacity-20 rounded">
+                        <span>Conversions</span>
+                        <span class="font-bold text-yellow-400">${data.total_conversions}</span>
+                    </div>
+                    <div class="flex justify-between p-2 bg-black bg-opacity-20 rounded">
+                        <span>Score Moyen</span>
+                        <span class="font-bold text-purple-400">${data.avg_lead_score.toFixed(1)}</span>
+                    </div>
+                `;
+
+                // Insights
+                const insights = data.insights || [];
+                document.getElementById('blackboard-insights').innerHTML = insights.length === 0
+                    ? '<p class="text-gray-500 text-center py-4">Aucun insight</p>'
+                    : insights.map(i => `
+                        <div class="p-2 bg-black bg-opacity-20 rounded">
+                            <p class="text-sm">${i.insight}</p>
+                            <p class="text-xs text-gray-500">${i.session_id.substring(0, 8)}... | ${new Date(i.timestamp).toLocaleString()}</p>
+                        </div>
+                    `).join('');
+            } catch (error) {
+                console.error('Error loading blackboard:', error);
+            }
+        }
+
+        // Prompts
+        function selectPromptTab(agent) {
+            document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            currentPromptAgent = agent;
+            loadPrompt(agent);
+        }
+
+        async function loadPrompt(agent) {
+            try {
+                document.getElementById('current-prompt-agent').textContent = agent;
+                const response = await fetch(`${API_BASE}/api/prompts/${agent}`);
+                const data = await response.json();
+                document.getElementById('prompt-editor').value = data.prompt || '';
+            } catch (error) {
+                console.error('Error loading prompt:', error);
+                document.getElementById('prompt-editor').value = 'Erreur de chargement';
+            }
+        }
+
+        async function savePrompt() {
+            try {
+                const prompt = document.getElementById('prompt-editor').value;
+                const response = await fetch(`${API_BASE}/api/prompts/${currentPromptAgent}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt })
+                });
+
+                if (response.ok) {
+                    alert('Prompt sauvegardé avec succès!');
+                } else {
+                    alert('Erreur lors de la sauvegarde');
+                }
+            } catch (error) {
+                console.error('Error saving prompt:', error);
+                alert('Erreur lors de la sauvegarde');
+            }
+        }
+
+        function resetPrompt() {
+            if (confirm('Réinitialiser le prompt aux valeurs par défaut?')) {
+                loadPrompt(currentPromptAgent);
+            }
+        }
+
+        // Configuration
+        async function loadConfig() {
+            try {
+                // Load current config
+                const configResponse = await fetch(`${API_BASE}/api/config`);
+                config = await configResponse.json();
+
+                // Load available models
+                const modelsResponse = await fetch(`${API_BASE}/api/config/llm-models`);
+                llmModels = await modelsResponse.json();
+
+                // Update UI
+                document.getElementById('llm-provider').value = config.llm.provider;
+                document.getElementById('llm-temperature').value = config.llm.temperature;
+                document.getElementById('temp-value').textContent = config.llm.temperature;
+
+                loadModelsForProvider();
+                document.getElementById('llm-model').value = config.llm.model;
+
+                // Update MCP connections
+                for (const [type, conn] of Object.entries(config.mcp_connections)) {
+                    const checkbox = document.getElementById(`mcp-${type}`);
+                    const status = document.getElementById(`status-${type}`);
+                    if (checkbox) {
+                        checkbox.checked = conn.enabled;
+                    }
+                    if (status) {
+                        status.className = `connection-status ${conn.enabled ? 'connected' : 'disconnected'}`;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading config:', error);
+            }
+        }
+
+        function loadModelsForProvider() {
+            const provider = document.getElementById('llm-provider').value;
+            const modelSelect = document.getElementById('llm-model');
+            const models = llmModels[provider] || [];
+
+            modelSelect.innerHTML = models.map(m =>
+                `<option value="${m.id}">${m.name}</option>`
+            ).join('');
+        }
+
+        function toggleMCP(type) {
+            const checkbox = document.getElementById(`mcp-${type}`);
+            const status = document.getElementById(`status-${type}`);
+            status.className = `connection-status ${checkbox.checked ? 'connected' : 'disconnected'}`;
+        }
+
+        async function saveConfig() {
+            try {
+                const llmConfig = {
+                    provider: document.getElementById('llm-provider').value,
+                    model: document.getElementById('llm-model').value,
+                    temperature: parseFloat(document.getElementById('llm-temperature').value),
+                };
+
+                const response = await fetch(`${API_BASE}/api/config`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ llm: llmConfig })
+                });
+
+                if (response.ok) {
+                    alert('Configuration LLM sauvegardée!');
+                } else {
+                    alert('Erreur lors de la sauvegarde');
+                }
+            } catch (error) {
+                console.error('Error saving config:', error);
+                alert('Erreur lors de la sauvegarde');
+            }
+        }
+
+        async function saveMCPConfig() {
+            try {
+                const mcpConnections = {};
+                ['hubspot', 'gmail', 'google_drive', 'web', 'linkedin'].forEach(type => {
+                    const checkbox = document.getElementById(`mcp-${type}`);
+                    if (checkbox) {
+                        mcpConnections[type] = { enabled: checkbox.checked };
+                    }
+                });
+
+                const response = await fetch(`${API_BASE}/api/config`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mcp_connections: mcpConnections })
+                });
+
+                if (response.ok) {
+                    alert('Connexions MCP sauvegardées!');
+                } else {
+                    alert('Erreur lors de la sauvegarde');
+                }
+            } catch (error) {
+                console.error('Error saving MCP config:', error);
+                alert('Erreur lors de la sauvegarde');
+            }
+        }
+
+        // Prospect Form
+        document.getElementById('prospect-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const prospect = {
+                name: document.getElementById('prospect-name').value,
+                company: document.getElementById('prospect-company').value,
+                email: document.getElementById('prospect-email').value,
+                phone: document.getElementById('prospect-phone').value,
+                sector: document.getElementById('prospect-sector').value,
+                company_size: document.getElementById('prospect-size').value,
+                decision_maker: document.getElementById('prospect-decision-maker').checked,
+                pain_points: document.getElementById('prospect-pain-points').value.split(',').map(s => s.trim()).filter(s => s),
+                interests: document.getElementById('prospect-interests').value.split(',').map(s => s.trim()).filter(s => s),
+                notes: document.getElementById('prospect-notes').value,
+            };
+
+            const resultContainer = document.getElementById('prospect-result');
+            resultContainer.innerHTML = '<p class="text-center py-8 loading"><i class="fas fa-spinner fa-spin text-4xl"></i><br>Création en cours...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/prospects`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(prospect)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    resultContainer.innerHTML = `
+                        <div class="text-center py-4">
+                            <i class="fas fa-check-circle text-green-400 text-4xl mb-4"></i>
+                            <h4 class="text-lg font-bold mb-2">Prospect créé!</h4>
+                            <p class="text-gray-400">${result.message}</p>
+                            <div class="mt-4 p-4 bg-black bg-opacity-20 rounded text-left">
+                                <p><strong>Session ID:</strong> ${result.session_id}</p>
+                                ${result.hubspot_id ? `<p><strong>HubSpot ID:</strong> ${result.hubspot_id}</p>` : ''}
+                            </div>
+                            <button onclick="viewSession('${result.session_id}')" class="btn-primary mt-4 px-4 py-2 rounded">
+                                Voir la session
+                            </button>
+                        </div>
+                    `;
+
+                    // Reset form
+                    document.getElementById('prospect-form').reset();
+                } else {
+                    throw new Error(result.message || 'Erreur inconnue');
+                }
+            } catch (error) {
+                resultContainer.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-exclamation-circle text-red-400 text-4xl mb-4"></i>
+                        <h4 class="text-lg font-bold mb-2">Erreur</h4>
+                        <p class="text-gray-400">${error.message}</p>
+                    </div>
+                `;
+            }
+        });
+
+        function viewSession(sessionId) {
+            showSection('sessions');
+            setTimeout(() => loadSessionDetail(sessionId), 100);
+        }
+
+        // Initial load
+        loadDashboard();
+    </script>
+</body>
+</html>

@@ -199,6 +199,65 @@ from memory import set_memory_store, JSONFileStore
 set_memory_store(JSONFileStore("./data"))
 ```
 
+## 🌐 Interface Web de Monitoring
+
+Le système inclut une interface web complète pour monitorer et configurer les agents.
+
+### Lancement de l'Interface Web
+
+```bash
+python run_web.py
+```
+
+Puis ouvrez votre navigateur sur http://localhost:8000
+
+### Fonctionnalités de l'Interface
+
+| Section | Description |
+|---------|-------------|
+| **Dashboard** | Vue d'ensemble : sessions, conversions, scores moyens |
+| **Sessions** | Liste et détail de toutes les conversations |
+| **Logs Agents** | Historique des actions de chaque agent en temps réel |
+| **Blackboard** | Mémoire partagée et insights collectés |
+| **Prompts** | Modification des prompts système de chaque agent |
+| **Configuration** | Choix du provider LLM (OpenAI, Claude, Grok, DeepSeek) et connexions MCP |
+| **Nouveau Prospect** | Formulaire d'insertion manuelle de prospects |
+
+### Configuration LLM
+
+Changez de provider LLM dynamiquement :
+- **OpenAI** : GPT-4, GPT-4 Turbo, GPT-4o, GPT-3.5 Turbo
+- **Anthropic** : Claude 3.5 Sonnet, Claude 3 Opus
+- **Grok (xAI)** : Grok 2, Grok Beta
+- **DeepSeek** : DeepSeek Chat, DeepSeek Coder
+
+### Connexions MCP
+
+Gérez les intégrations externes :
+- **HubSpot CRM** : Synchronisation des contacts et deals
+- **Gmail** : Envoi d'emails automatisés
+- **Google Drive** : Stockage de documents
+- **Accès Web** : Recherche internet
+- **LinkedIn** : Prospection sociale
+
+### API REST
+
+L'interface web expose une API REST complète :
+
+| Endpoint | Méthode | Description |
+|----------|---------|-------------|
+| `/api/sessions` | GET | Liste des sessions |
+| `/api/sessions/{id}` | GET | Détail d'une session |
+| `/api/logs` | GET | Logs des agents |
+| `/api/blackboard` | GET | État de la mémoire partagée |
+| `/api/prompts` | GET | Tous les prompts |
+| `/api/prompts/{agent}` | GET/PUT | Prompt d'un agent |
+| `/api/config` | GET/PUT | Configuration système |
+| `/api/prospects` | POST | Créer un prospect |
+| `/api/prospects/{id}/message` | POST | Envoyer un message |
+
+Documentation Swagger : http://localhost:8000/docs
+
 ## 📁 Structure du Projet
 
 ```
@@ -211,11 +270,17 @@ AgenticSellerPOC/
 │   ├── negotiator.py   # Gestion objections
 │   ├── crm.py          # Intégration CRM
 │   └── supervisor.py   # Supervision processus
+├── web/                 # Interface web de monitoring
+│   ├── app.py          # Application FastAPI
+│   ├── models.py       # Modèles Pydantic API
+│   ├── templates/      # Templates HTML
+│   └── static/         # Fichiers statiques
 ├── config.py           # Configuration
 ├── state.py            # Gestion d'état
 ├── memory.py           # Stockage mémoire
 ├── orchestrator.py     # Orchestrateur LangGraph
-├── main.py             # Point d'entrée
+├── main.py             # Point d'entrée CLI
+├── run_web.py          # Point d'entrée Web
 ├── examples.py         # Scénarios d'exemple
 ├── requirements.txt    # Dépendances Python
 └── README.md           # Ce fichier
