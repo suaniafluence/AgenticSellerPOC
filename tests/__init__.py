@@ -1,1 +1,1 @@
-"""Tests package for IAfluence Sales Agent."""
+"""Tests for Agentic Seller POC."""
