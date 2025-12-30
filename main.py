@@ -1,4 +1,4 @@
-"""Main entry point for the Agentic Seller POC."""
+"""Point d'entrée principal pour l'assistant commercial IAfluence."""
 import sys
 from orchestrator import SalesOrchestrator
 from memory import set_memory_store, InMemoryStore, JSONFileStore
@@ -12,7 +12,7 @@ def print_message(message: dict):
     metadata = message.get("metadata", {})
 
     if role == "user":
-        print(f"\n👤 PROSPECT: {content}")
+        print(f"\n👤 PROSPECT : {content}")
     elif role == "assistant":
         agent = metadata.get("agent", "unknown")
         agent_emoji = {
@@ -22,31 +22,35 @@ def print_message(message: dict):
             "supervisor": "👨‍💼",
             "crm": "📊",
         }.get(agent, "🤖")
-        print(f"\n{agent_emoji} {agent.upper()}: {content}")
+        print(f"\n{agent_emoji} {agent.upper()} : {content}")
 
 
 def run_interactive_demo():
-    """Run an interactive demo of the sales agent."""
+    """Run an interactive demo of the IAfluence sales agent."""
     print("="*70)
-    print("🚀 AGENTIC SELLER POC - Interactive Demo")
+    print("🚀 IAFLUENCE - Assistant Commercial IA")
     print("="*70)
-    print("\nThis is a multi-agent sales system powered by LangGraph.")
-    print("Type your messages as a prospect, and the AI agents will respond.")
-    print("Type 'quit' or 'exit' to end the session.\n")
+    print("\nBienvenue dans l'assistant commercial IAfluence.")
+    print("Système multi-agents propulsé par LangGraph.")
+    print("\nIAfluence accompagne les PME et ETI dans leur transformation IA :")
+    print("  • Stratégie IA & Gouvernance")
+    print("  • Formation & Montée en compétences")
+    print("  • Expertise technique & POC")
+    print("\nTapez vos messages comme un prospect. Tapez 'quit' pour terminer.\n")
 
     # Initialize orchestrator
     orchestrator = SalesOrchestrator()
 
     # Get initial message
-    print("Enter your first message as a prospect:")
-    initial_message = input("👤 You: ").strip()
+    print("Entrez votre premier message :")
+    initial_message = input("👤 Vous : ").strip()
 
     if not initial_message:
-        print("❌ No message entered. Exiting.")
+        print("❌ Aucun message. Fin de session.")
         return
 
     # Start conversation
-    print("\n⚙️  Processing your message through the agent network...\n")
+    print("\n⚙️  Traitement en cours...\n")
     state = orchestrator.run_conversation(initial_message)
     session_id = state["session_id"]
 
@@ -57,17 +61,17 @@ def run_interactive_demo():
     # Continue conversation loop
     while not state.get("closed", False):
         print("\n" + "-"*70)
-        user_input = input("👤 You: ").strip()
+        user_input = input("👤 Vous : ").strip()
 
         if user_input.lower() in ["quit", "exit", "q"]:
-            print("\n👋 Ending conversation...")
+            print("\n👋 Fin de la conversation...")
             break
 
         if not user_input:
             continue
 
         # Process message
-        print("\n⚙️  Processing...\n")
+        print("\n⚙️  Traitement...\n")
         state = orchestrator.continue_conversation(session_id, user_input)
 
         # Display new messages (only the ones added in this round)
@@ -78,39 +82,39 @@ def run_interactive_demo():
 
     # Show final summary
     print("\n" + "="*70)
-    print("📊 CONVERSATION SUMMARY")
+    print("📊 RÉSUMÉ DE LA CONVERSATION")
     print("="*70)
-    print(f"Session ID: {session_id}")
-    print(f"Lead Type: {state.get('lead_type', 'Unknown')}")
-    print(f"Lead Score: {state.get('lead_score', 0)}/100")
-    print(f"Qualified: {'✅ Yes' if state.get('qualified') else '❌ No'}")
-    print(f"Converted: {'✅ Yes' if state.get('converted') else '❌ No'}")
-    print(f"Escalated: {'⬆️ Yes' if state.get('escalated') else '❌ No'}")
-    print(f"Messages Exchanged: {len(state.get('messages', []))}")
-    print(f"Offers Made: {len(state.get('offers_made', []))}")
-    print(f"Negotiation Rounds: {state.get('negotiation_count', 0)}")
+    print(f"Session ID : {session_id}")
+    print(f"Type de lead : {state.get('lead_type', 'Inconnu')}")
+    print(f"Score du lead : {state.get('lead_score', 0)}/100")
+    print(f"Qualifié : {'✅ Oui' if state.get('qualified') else '❌ Non'}")
+    print(f"Converti : {'✅ Oui' if state.get('converted') else '❌ Non'}")
+    print(f"Escaladé : {'⬆️ Oui' if state.get('escalated') else '❌ Non'}")
+    print(f"Messages échangés : {len(state.get('messages', []))}")
+    print(f"Offres proposées : {len(state.get('offers_made', []))}")
+    print(f"Tours de négociation : {state.get('negotiation_count', 0)}")
     print("="*70)
 
     if state.get("key_insights"):
-        print("\n💡 KEY INSIGHTS:")
+        print("\n💡 INSIGHTS CLÉS :")
         for i, insight in enumerate(state.get("key_insights", []), 1):
             print(f"{i}. {insight}")
 
 
-def run_example_scenario(scenario_name: str = "hot_lead"):
+def run_example_scenario(scenario_name: str = "pme_shadow_ia"):
     """Run a predefined example scenario."""
     from examples import SCENARIOS
 
     if scenario_name not in SCENARIOS:
-        print(f"❌ Scenario '{scenario_name}' not found.")
-        print(f"Available scenarios: {', '.join(SCENARIOS.keys())}")
+        print(f"❌ Scénario '{scenario_name}' non trouvé.")
+        print(f"Scénarios disponibles : {', '.join(SCENARIOS.keys())}")
         return
 
     scenario = SCENARIOS[scenario_name]
     print("="*70)
-    print(f"🎬 RUNNING SCENARIO: {scenario['name']}")
+    print(f"🎬 SCÉNARIO : {scenario['name']}")
     print("="*70)
-    print(f"Description: {scenario['description']}\n")
+    print(f"Description : {scenario['description']}\n")
 
     # Initialize orchestrator
     orchestrator = SalesOrchestrator()
@@ -121,7 +125,7 @@ def run_example_scenario(scenario_name: str = "hot_lead"):
 
     for i, message in enumerate(scenario["messages"]):
         print(f"\n{'='*70}")
-        print(f"TURN {i+1}")
+        print(f"TOUR {i+1}")
         print('='*70)
 
         if i == 0:
@@ -142,11 +146,11 @@ def run_example_scenario(scenario_name: str = "hot_lead"):
 
     # Show final summary
     print("\n" + "="*70)
-    print("📊 SCENARIO COMPLETE")
+    print("📊 SCÉNARIO TERMINÉ")
     print("="*70)
-    print(f"Converted: {'✅ Yes' if state.get('converted') else '❌ No'}")
-    print(f"Escalated: {'⬆️ Yes' if state.get('escalated') else '❌ No'}")
-    print(f"Final Lead Score: {state.get('lead_score', 0)}/100")
+    print(f"Converti : {'✅ Oui' if state.get('converted') else '❌ Non'}")
+    print(f"Escaladé : {'⬆️ Oui' if state.get('escalated') else '❌ Non'}")
+    print(f"Score final : {state.get('lead_score', 0)}/100")
     print("="*70)
 
 
@@ -164,13 +168,17 @@ def main():
         if command == "demo":
             run_interactive_demo()
         elif command == "scenario":
-            scenario_name = sys.argv[2] if len(sys.argv) > 2 else "hot_lead"
+            scenario_name = sys.argv[2] if len(sys.argv) > 2 else "pme_shadow_ia"
             run_example_scenario(scenario_name)
+        elif command == "list":
+            from examples import list_scenarios
+            list_scenarios()
         else:
-            print(f"Unknown command: {command}")
-            print("\nUsage:")
-            print("  python main.py demo              - Run interactive demo")
-            print("  python main.py scenario <name>   - Run example scenario")
+            print(f"Commande inconnue : {command}")
+            print("\nUtilisation :")
+            print("  python main.py demo              - Démo interactive")
+            print("  python main.py scenario <nom>    - Lancer un scénario")
+            print("  python main.py list              - Lister les scénarios")
     else:
         # Default to interactive demo
         run_interactive_demo()
