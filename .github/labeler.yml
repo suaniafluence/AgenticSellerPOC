@@ -1,0 +1,39 @@
+# Configuration for actions/labeler
+# See https://github.com/actions/labeler
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.md'
+          - 'docs/**/*'
+
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'requirements.txt'
+          - 'setup.py'
+          - 'pyproject.toml'
+
+agents:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'agents/**/*'
+
+tests:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*test*.py'
+          - 'tests/**/*'
+
+ci-cd:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/**/*'
+
+configuration:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'config.py'
+          - '.env.example'
+          - '**/*.yml'
+          - '**/*.yaml'
