@@ -1,4 +1,4 @@
-"""CRM Agent."""
+"""CRM Agent - IAfluence."""
 import json
 from typing import Any, Dict
 from datetime import datetime
@@ -7,11 +7,20 @@ from .base import BaseAgent
 
 class CRMAgent(BaseAgent):
     """
-    Agent responsible for CRM integration and data management.
+    Agent CRM IAfluence.
 
-    Records conversations, tracks deals, updates contact information,
-    and creates tasks for human sales team.
+    Enregistre les conversations, suit les opportunités,
+    met à jour les informations de contact et crée des tâches de suivi.
     """
+
+    # Coordonnées IAfluence
+    CONTACT_INFO = {
+        "fondateur": "Suan Tay",
+        "email": "suan.tay@iafluence.fr",
+        "telephone": "06 65 19 76 33",
+        "calendrier": "https://calendar.app.google/BcE52KKmVRmki1kZ8",
+        "site": "https://iafluence.fr"
+    }
 
     def __init__(self, **kwargs):
         super().__init__(name="CRM_Agent", **kwargs)
@@ -38,21 +47,22 @@ class CRMAgent(BaseAgent):
             "objections": state.get("objections", []),
             "negotiation_rounds": state.get("negotiation_count", 0),
             "key_insights": state.get("key_insights", []),
-            "sentiment": state.get("sentiment", "neutral"),
+            "sentiment": state.get("sentiment", "neutre"),
+            "maturite_ia": lead_info.get("maturite_ia", "debutant"),
             "conversation_summary": self._create_summary(state),
         }
 
         # Simulate CRM sync (in production, this would call actual CRM API)
         print("\n" + "="*60)
-        print("📊 CRM SYNC")
+        print("📊 SYNCHRONISATION CRM - IAFLUENCE")
         print("="*60)
-        print(json.dumps(crm_record, indent=2))
+        print(json.dumps(crm_record, indent=2, ensure_ascii=False))
         print("="*60 + "\n")
 
-        # Create tasks for sales team
+        # Create tasks for follow-up
         tasks = self._create_tasks(state)
         if tasks:
-            print("📋 TASKS CREATED:")
+            print("📋 TÂCHES CRÉÉES :")
             for i, task in enumerate(tasks, 1):
                 print(f"{i}. {task}")
             print()
@@ -62,13 +72,36 @@ class CRMAgent(BaseAgent):
         state["last_agent"] = state["current_agent"]
         state["current_agent"] = "crm"
 
-        # Add CRM sync message
+        # Add CRM sync message with IAfluence contact info
         if converted:
-            message = "Great! I've recorded your information and created your account. You'll receive a confirmation email shortly with next steps."
+            message = f"""Parfait ! Je note votre intérêt pour notre accompagnement.
+
+Pour planifier votre diagnostic gratuit avec Suan Tay, notre fondateur, vous pouvez :
+- Réserver directement un créneau : {self.CONTACT_INFO['calendrier']}
+- Nous contacter par email : {self.CONTACT_INFO['email']}
+- Nous appeler : {self.CONTACT_INFO['telephone']}
+
+Suan vous recontactera sous 24h pour préparer votre rendez-vous. À très bientôt !"""
         elif escalated:
-            message = "I've recorded our conversation and a senior sales specialist will reach out to you within 24 hours to discuss your specific needs."
+            message = f"""J'ai bien noté vos besoins spécifiques.
+
+Suan Tay, notre fondateur, va vous recontacter personnellement sous 24h pour discuter d'un accompagnement sur-mesure.
+
+En attendant, vous pouvez :
+- Réserver un créneau directement : {self.CONTACT_INFO['calendrier']}
+- L'appeler : {self.CONTACT_INFO['telephone']}
+- Lui écrire : {self.CONTACT_INFO['email']}
+
+À très bientôt !"""
         else:
-            message = "Thank you for your time. I've saved our conversation and you'll hear from us soon with more information."
+            message = f"""Merci pour cet échange !
+
+Si vous souhaitez en discuter à l'avenir, n'hésitez pas à contacter Suan Tay :
+- Email : {self.CONTACT_INFO['email']}
+- Téléphone : {self.CONTACT_INFO['telephone']}
+- Prendre RDV : {self.CONTACT_INFO['calendrier']}
+
+IAfluence - L'IA utile, au bon endroit, au bon rythme."""
 
         state["messages"].append({
             "role": "assistant",
@@ -87,42 +120,54 @@ class CRMAgent(BaseAgent):
         messages = state.get("messages", [])
         lead_score = state.get("lead_score", 0)
         converted = state.get("converted", False)
+        lead_info = state.get("lead_info", {})
 
         message_count = len(messages)
 
         if converted:
-            status = "✅ CONVERTED"
+            status = "✅ CONVERTI"
         elif state.get("escalated"):
-            status = "⬆️ ESCALATED"
+            status = "⬆️ ESCALADE"
         elif state.get("qualified"):
-            status = "🔥 QUALIFIED"
+            status = "🔥 QUALIFIÉ"
         else:
-            status = "❄️ NOT QUALIFIED"
+            status = "❄️ NON QUALIFIÉ"
 
-        return f"{status} | Lead Score: {lead_score} | Messages: {message_count}"
+        maturite = lead_info.get("maturite_ia", "inconnu")
+        offre_reco = lead_info.get("offre_recommandee", "DIAGNOSTIC")
+
+        return f"{status} | Score: {lead_score} | Maturité IA: {maturite} | Offre reco: {offre_reco} | Messages: {message_count}"
 
     def _create_tasks(self, state: Dict[str, Any]) -> list:
-        """Create tasks for the sales team."""
+        """Create tasks for follow-up."""
         tasks = []
+        lead_info = state.get("lead_info", {})
 
         if state.get("converted"):
-            tasks.append("Send welcome email and onboarding materials")
-            tasks.append("Schedule kickoff call")
-            tasks.append("Set up account and provision access")
+            tasks.append("📅 Envoyer confirmation de RDV diagnostic")
+            tasks.append("📧 Envoyer email de préparation au diagnostic")
+            tasks.append(f"📞 Appeler pour confirmer le créneau - {self.CONTACT_INFO['telephone']}")
+            if lead_info.get("offre_recommandee"):
+                tasks.append(f"📝 Préparer proposition {lead_info.get('offre_recommandee')}")
 
         elif state.get("escalated"):
-            tasks.append("Senior sales rep to follow up within 24 hours")
-            tasks.append("Prepare custom proposal addressing specific objections")
+            tasks.append("🔔 Suan Tay doit rappeler sous 24h")
+            tasks.append("📄 Préparer proposition sur-mesure")
             objections = state.get("objections", [])
             if objections:
-                tasks.append(f"Review objections: {', '.join(objections[:3])}")
+                tasks.append(f"🎯 Adresser les objections : {', '.join(objections[:3])}")
+            if lead_info.get("company_size") in ["eti", "grand_compte"]:
+                tasks.append("💼 Préparer offre ETI/Grand compte personnalisée")
 
         elif state.get("qualified"):
-            tasks.append("Follow up in 3-5 days")
-            tasks.append("Send case studies relevant to their sector")
+            tasks.append("📧 Envoyer email de suivi dans 3-5 jours")
+            tasks.append("📚 Envoyer documentation adaptée au secteur")
+            if lead_info.get("pain_points"):
+                tasks.append(f"🎯 Contenu ciblé sur : {', '.join(lead_info.get('pain_points', [])[:2])}")
 
         else:
-            tasks.append("Add to nurture campaign")
-            tasks.append("Follow up in 30 days")
+            tasks.append("📧 Ajouter à la newsletter IAfluence")
+            tasks.append("🔄 Relancer dans 30 jours")
+            tasks.append("📱 Connecter sur LinkedIn")
 
         return tasks

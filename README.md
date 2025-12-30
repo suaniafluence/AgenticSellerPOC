@@ -1,22 +1,24 @@
-# 🤖 Agentic Seller POC - Multi-Channel Adaptive Sales Agent
+# 🚀 IAfluence - Assistant Commercial IA Multi-Agents
 
-An advanced Proof of Concept for an autonomous multi-agent sales system powered by **LangGraph** and LLMs. This system simulates intelligent sales conversations with adaptive behavior, handling lead qualification, offer creation, negotiation, and CRM integration.
+Système de vente autonome multi-agents propulsé par **LangGraph** pour accompagner les PME et ETI dans leur transformation IA.
 
-## 🎯 Overview
+## 🎯 À propos d'IAfluence
 
-This POC demonstrates a **Multi-Agent Control Plane (MCP)** architecture where specialized AI agents collaborate to:
+**IAfluence** accompagne les PME et ETI dans la structuration, la sécurisation et l'industrialisation de leurs usages de l'intelligence artificielle.
 
-- ✅ **Qualify leads** - Classify prospects as hot/warm/cold with scoring
-- 💼 **Create personalized offers** - Tailored pricing and features based on needs
-- 🤝 **Negotiate intelligently** - Handle objections and adjust offers dynamically
-- 📊 **Sync with CRM** - Record conversations and create tasks for sales team
-- 👨‍💼 **Supervise flow** - Oversee the process and escalate when needed
+> *L'IA utile, au bon endroit, au bon rythme.*
 
-## 🏗️ Architecture
+### Les 3 Piliers IAfluence
 
-### Multi-Agent System
+| Pilier | Description |
+|--------|-------------|
+| **Stratégie IA & Gouvernance** | Charte IA, lutte contre le Shadow IA, trajectoire vers la souveraineté |
+| **Formation & Montée en compétences** | Dirigeants, équipes métiers, équipes IT |
+| **Expertise technique & POC** | Infrastructure IA souveraine, déploiement LLM, POC ciblés |
 
-The system consists of 5 specialized agents orchestrated by LangGraph:
+## 🏗️ Architecture Multi-Agents
+
+Le système utilise 5 agents spécialisés orchestrés par LangGraph :
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -29,199 +31,167 @@ The system consists of 5 specialized agents orchestrated by LangGraph:
 ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
 │  Classifier  │ │    Seller    │ │  Negotiator  │
 │              │ │              │ │              │
-│ - Qualify    │ │ - Create     │ │ - Handle     │
-│ - Score      │ │   offers     │ │   objections │
-│ - Categorize │ │ - Pitch      │ │ - Adjust     │
+│ - Qualifier  │ │ - Proposer   │ │ - Gérer      │
+│ - Scorer     │ │   offres     │ │   objections │
+│ - Analyser   │ │ - Pitcher    │ │ - Ajuster    │
 └──────────────┘ └──────────────┘ └──────────────┘
         │            │            │
         └────────────┼────────────┘
                      ▼
         ┌────────────────────────┐
         │      Supervisor        │
-        │ - Analyze state        │
-        │ - Route decisions      │
-        │ - Check conversion     │
+        │ - Analyser état        │
+        │ - Router décisions     │
+        │ - Détecter conversion  │
         └────────────┬───────────┘
                      ▼
         ┌────────────────────────┐
         │       CRM Agent        │
-        │ - Sync data            │
-        │ - Create tasks         │
-        │ - Generate insights    │
+        │ - Synchroniser data    │
+        │ - Créer tâches suivi   │
+        │ - Générer insights     │
         └────────────────────────┘
 ```
 
-### Agents Description
+### Description des Agents
 
-| Agent | Role | Capabilities |
-|-------|------|-------------|
-| **Prospect_Classifier** | Lead Qualification | Detects lead type (hot/warm/cold), sector, company size, pain points, decision-maker status. Scores 0-100. |
-| **Seller** | Offer Creation | Creates personalized offers with pricing, features, trials, discounts based on prospect profile. |
-| **Negotiator** | Objection Handling | Identifies objection categories (price, features, timing, etc.), adjusts offers, finds win-win solutions. |
-| **Supervisor** | Process Oversight | Analyzes conversation state, routes to appropriate agents, detects conversion, triggers escalation. |
-| **CRM_Agent** | Data Management | Syncs to CRM, creates follow-up tasks, generates conversation summaries and insights. |
+| Agent | Rôle | Capacités |
+|-------|------|-----------|
+| **Classifier** | Qualification | Détecte type de lead (chaud/tiède/froid), secteur, taille, maturité IA, problématiques. Score 0-100. |
+| **Seller** | Création d'offres | Propose des offres personnalisées selon les besoins : Diagnostic, Stratégie, Formation, Expertise, Accompagnement global. |
+| **Negotiator** | Gestion objections | Identifie les objections (budget, timing, autorité, confiance), ajuste les propositions, trouve des solutions. |
+| **Supervisor** | Orchestration | Analyse l'état de la conversation, route vers les bons agents, détecte la conversion, déclenche l'escalade. |
+| **CRM Agent** | Gestion données | Synchronise avec le CRM, crée les tâches de suivi, fournit les coordonnées de Suan Tay. |
 
-## 🚀 Quick Start
+## 🚀 Démarrage Rapide
 
 ### Installation
 
-1. **Clone the repository**
+1. **Cloner le repository**
 ```bash
 git clone <repository-url>
 cd AgenticSellerPOC
 ```
 
-2. **Install dependencies**
+2. **Installer les dépendances**
 ```bash
 pip install -r requirements.txt
 ```
 
-3. **Configure environment**
+3. **Configurer l'environnement**
 ```bash
 cp .env.example .env
-# Edit .env and add your API keys
+# Éditer .env et ajouter vos clés API
 ```
 
-Required API keys:
-- `OPENAI_API_KEY` - For GPT-4 (recommended)
-- `ANTHROPIC_API_KEY` - For Claude (alternative)
+Clés API requises :
+- `OPENAI_API_KEY` - Pour GPT-4 (recommandé)
+- `ANTHROPIC_API_KEY` - Pour Claude (alternative)
 
-### Usage
+### Utilisation
 
-#### Interactive Demo
+#### Démo Interactive
 
-Run an interactive conversation as a prospect:
+Lancez une conversation interactive en tant que prospect :
 
 ```bash
 python main.py demo
 ```
 
-This launches an interactive session where you can chat with the AI sales agents.
+#### Scénarios Prédéfinis
 
-#### Pre-built Scenarios
-
-Run one of the example scenarios:
+Exécutez un des scénarios d'exemple :
 
 ```bash
-python main.py scenario hot_lead
-python main.py scenario price_negotiation
-python main.py scenario enterprise_escalation
+python main.py scenario pme_shadow_ia
+python main.py scenario eti_strategie_ia
+python main.py scenario formation_dirigeants
 ```
 
-Available scenarios:
-- `hot_lead` - Quick conversion with minimal negotiation
-- `price_negotiation` - Multiple rounds of price discussion
-- `feature_concerns` - Specific feature requirements
-- `timing_objection` - Prospect wants to wait
-- `enterprise_escalation` - Complex deal requiring human involvement
-- `competitor_comparison` - Evaluating against competitors
-- `unqualified_cold` - Low-quality lead for nurturing
-- `decision_maker_check` - Needs manager approval
-- `multiple_objections` - Complex sale with several concerns
-- `rapid_conversion` - Very hot lead, instant close
+Scénarios disponibles :
+- `pme_shadow_ia` - PME urgence Shadow IA
+- `eti_strategie_ia` - ETI stratégie complète
+- `formation_dirigeants` - Formation CODIR
+- `poc_souverain` - POC IA souveraine secteur santé
+- `objection_budget` - Négociation budget limité
+- `objection_timing` - Report de projet
+- `lead_froid` - Lead en veille simple
+- `escalade_grand_compte` - Grand compte nécessitant le fondateur
+- `conversion_rapide` - Conversion immédiate
+- `accompagnement_global` - Package complet sur plusieurs mois
 
-List all scenarios:
+Lister tous les scénarios :
 ```bash
-python examples.py
+python main.py list
 ```
 
-## 📊 Example Conversation Flow
+## 📊 Exemple de Conversation
 
 ```
-👤 PROSPECT: Hi, I'm the CTO of a 50-person SaaS startup. We need a sales
-             automation solution ASAP. Budget approved for $500/month.
+👤 PROSPECT : Bonjour, je suis le DG d'une PME de 80 personnes.
+             Mes équipes utilisent ChatGPT sans contrôle, je suis inquiet.
 
-🔍 CLASSIFIER: [Analyzes → HOT lead, SAAS sector, SME size, Score: 85/100]
+🔍 CLASSIFIER : [Analyse → Lead CHAUD, Industrie, PME, Score: 85/100]
+               Problématique : Shadow IA, sécurité données
 
-💼 SELLER: Great to meet you! Based on your needs, I recommend our
-          PROFESSIONAL plan at $299/month with:
-          - Advanced automation features
-          - Up to 50 users (perfect for your team)
-          - 14-day free trial
-          - 15% discount for annual commitment
+💼 SELLER : Je comprends votre inquiétude, c'est un sujet critique.
+           IAfluence peut vous aider avec :
+           - Un diagnostic gratuit de 45 min avec Suan Tay
+           - Une cartographie des usages IA non contrôlés
+           - Des recommandations personnalisées
 
-👤 PROSPECT: That sounds good! Can we get a 14-day trial to test it?
+           Souhaitez-vous réserver un créneau ?
 
-👨‍💼 SUPERVISOR: [Analyzes → Positive sentiment, likely conversion]
+👤 PROSPECT : Oui, c'est urgent. Je peux avoir un RDV cette semaine ?
 
-💼 SELLER: Absolutely! The 14-day trial is included with no credit card
-          required. You'll have full access to all features.
+👨‍💼 SUPERVISOR : [Détecte → CONVERSION]
 
-👤 PROSPECT: Perfect! Let's do it. Sign us up for the PROFESSIONAL plan.
+📊 CRM : Parfait ! Voici comment réserver :
+        - Calendrier : https://calendar.app.google/BcE52KKmVRmki1kZ8
+        - Email : suan.tay@iafluence.fr
+        - Téléphone : 06 65 19 76 33
 
-👨‍💼 SUPERVISOR: [Detects → CONVERTED]
+        Suan vous recontactera sous 24h !
 
-📊 CRM: Great! I've created your account and you'll receive a confirmation
-        email shortly with next steps.
-
-✅ RESULT: Converted | Lead Score: 85/100 | 4 messages
+✅ RÉSULTAT : Converti | Score: 85/100 | 4 messages
 ```
 
-## 🧠 MCP (Multi-Agent Control Plane) Logic
+## 💼 Offres IAfluence
 
-The MCP is the brain of the system, implementing adaptive workflow control:
-
-### State Management
-
-The system maintains a comprehensive state including:
-- Conversation history
-- Lead information and classification
-- Offers made and current offer
-- Objections raised and handled
-- Negotiation count
-- Status flags (qualified, converted, escalated, closed)
-- Sentiment and insights
-
-### Routing Logic
-
-```python
-START → MCP Decision
-  ├─ No lead_type? → Classifier → MCP
-  ├─ Qualified & no offer? → Seller → MCP
-  ├─ Objection detected? → Negotiator → MCP
-  ├─ Need decision? → Supervisor → MCP
-  ├─ Converted/Escalated? → CRM → END
-  └─ Unknown state? → Supervisor → MCP
-```
-
-### Adaptive Behavior
-
-- **First interaction**: Always classify the lead
-- **After classification**: Route to Seller if qualified, otherwise nurture
-- **After offer**: Wait for response, route to Negotiator if objection
-- **After negotiation**: Re-offer or escalate after 3 rounds
-- **Conversion detection**: Keyword analysis + sentiment
-- **Escalation triggers**: Complex requirements, large deals, too many negotiations
+| Offre | Tarif | Description |
+|-------|-------|-------------|
+| **DIAGNOSTIC IA** | Gratuit / 490€ | Échange de 45 min, audit usages IA, recommandations |
+| **STRATÉGIE IA** | À partir de 3 500€ | Stratégie, charte IA, lutte Shadow IA (2-4 semaines) |
+| **FORMATION** | À partir de 1 500€/jour | Dirigeants, métiers, IT - présentiel ou distanciel |
+| **EXPERTISE TECHNIQUE** | À partir de 5 000€ | POC, infrastructure souveraine, déploiement LLM |
+| **ACCOMPAGNEMENT GLOBAL** | À partir de 2 500€/mois | Combinaison des 3 piliers, engagement 3 mois min |
 
 ## 🔧 Configuration
 
-### Products & Pricing
+### Règles de Négociation
 
-Default product catalog (configurable in `agents/seller.py`):
+Configurables dans `agents/negotiator.py` :
+- Remise maximum : 15% (engagement trimestriel/annuel)
+- Paiement échelonné : 3-4 mensualités possibles
+- Escalade automatique : après 3 tours de négociation
+- Diagnostic gratuit : toujours proposable
 
-| Product | Price/Month | Users | Target |
-|---------|-------------|-------|--------|
-| STARTER | $99 | Up to 10 | Startups |
-| PROFESSIONAL | $299 | Up to 50 | SMEs |
-| BUSINESS | $599 | Up to 200 | Medium companies |
-| ENTERPRISE | Custom | Unlimited | Large enterprises |
+### Critères de Qualification
 
-### Negotiation Limits
+Configurables dans `agents/classifier.py` :
+- **Lead Chaud** (70-100) : Besoin urgent, décideur, budget identifié
+- **Lead Tiède** (40-69) : Intéressé, exploration, pas d'urgence
+- **Lead Froid** (0-39) : Curiosité, pas de projet, budget limité
 
-Configurable in `agents/negotiator.py`:
-- Maximum discount: 30% (enterprise only)
-- Trial period: Up to 30 days
-- Auto-escalation: After 3 negotiation rounds
+## 💾 Persistance
 
-## 💾 Memory & Persistence
+Le système supporte deux modes de stockage :
 
-The system supports two memory backends:
+### Mémoire (Défaut)
+Rapide, pour tests et démos. Données perdues au redémarrage.
 
-### In-Memory Store (Default)
-Fast, for testing and demos. Data lost on restart.
-
-### JSON File Store
-Persistent storage to disk.
+### Fichiers JSON
+Stockage persistant sur disque.
 
 ```python
 from memory import set_memory_store, JSONFileStore
@@ -229,115 +199,90 @@ from memory import set_memory_store, JSONFileStore
 set_memory_store(JSONFileStore("./data"))
 ```
 
-### Vector Database (Future)
-For semantic search and advanced insights (Qdrant/Weaviate).
-
-## 📈 Insights & Analytics
-
-The CRM agent automatically captures:
-
-- **Lead Classification**: Type, sector, size, score
-- **Conversion Metrics**: Conversion rate, time to convert
-- **Objection Patterns**: Common objections by sector/size
-- **Negotiation Analysis**: Average rounds, discount patterns
-- **Sentiment Tracking**: Positive/neutral/negative trends
-
-## 🔌 CRM Integration
-
-Currently supports mock CRM output. Easy to extend to:
-
-- **HubSpot**: Via HubSpot API
-- **Salesforce**: Via Salesforce API
-- **Custom CRM**: Implement your own adapter
-
-See `agents/crm.py` for integration points.
-
-## 🛠️ Development
-
-### Project Structure
+## 📁 Structure du Projet
 
 ```
 AgenticSellerPOC/
-├── agents/              # Specialized agent implementations
+├── agents/              # Agents spécialisés
 │   ├── __init__.py
-│   ├── base.py         # Base agent class
-│   ├── classifier.py   # Prospect classifier
-│   ├── seller.py       # Offer creator
-│   ├── negotiator.py   # Objection handler
-│   ├── crm.py          # CRM integration
-│   └── supervisor.py   # Process supervisor
-├── config.py           # Configuration management
-├── state.py            # State definitions and management
-├── memory.py           # Memory storage backends
-├── orchestrator.py     # LangGraph MCP orchestrator
-├── main.py             # Main entry point
-├── examples.py         # Example scenarios
-├── requirements.txt    # Python dependencies
-└── README.md           # This file
+│   ├── base.py         # Classe de base
+│   ├── classifier.py   # Qualification prospects
+│   ├── seller.py       # Création d'offres
+│   ├── negotiator.py   # Gestion objections
+│   ├── crm.py          # Intégration CRM
+│   └── supervisor.py   # Supervision processus
+├── config.py           # Configuration
+├── state.py            # Gestion d'état
+├── memory.py           # Stockage mémoire
+├── orchestrator.py     # Orchestrateur LangGraph
+├── main.py             # Point d'entrée
+├── examples.py         # Scénarios d'exemple
+├── requirements.txt    # Dépendances Python
+└── README.md           # Ce fichier
 ```
 
-### Adding a New Agent
+## 📞 Contact IAfluence
 
-1. Create a new file in `agents/`
-2. Inherit from `BaseAgent`
-3. Implement the `process(state)` method
-4. Add to `orchestrator.py` graph
-5. Update routing logic in MCP
+**Suan Tay** - Fondateur & Consultant
 
-### Extending State
-
-Add new fields to `SalesState` in `state.py`:
-
-```python
-class SalesState(TypedDict):
-    # ... existing fields ...
-    your_new_field: YourType
-```
-
-## 🧪 Testing
-
-Run different scenarios to test agent behavior:
-
-```bash
-# Test lead qualification
-python main.py scenario hot_lead
-
-# Test negotiation logic
-python main.py scenario price_negotiation
-
-# Test escalation
-python main.py scenario enterprise_escalation
-```
-
-## 📝 Future Enhancements
-
-- [ ] Vector database integration for semantic memory
-- [ ] Multi-language support
-- [ ] Voice/audio input handling
-- [ ] Real-time CRM webhooks
-- [ ] A/B testing framework for offers
-- [ ] Sentiment analysis with dedicated model
-- [ ] Team collaboration features
-- [ ] Analytics dashboard
-- [ ] Email/SMS integration
-- [ ] Calendar integration for meetings
-
-## 🤝 Contributing
-
-This is a POC for demonstration purposes. Feel free to extend and adapt for your use case.
-
-## 📄 License
-
-MIT License - feel free to use and modify.
-
-## 🙏 Acknowledgments
-
-Built with:
-- [LangGraph](https://github.com/langchain-ai/langgraph) - Multi-agent orchestration
-- [LangChain](https://github.com/langchain-ai/langchain) - LLM framework
-- [OpenAI GPT-4](https://openai.com) - Language model
-- [Anthropic Claude](https://anthropic.com) - Alternative LLM
+- 📧 Email : suan.tay@iafluence.fr
+- 📱 Téléphone : 06 65 19 76 33
+- 📅 Calendrier : https://calendar.app.google/BcE52KKmVRmki1kZ8
 
 ---
 
-**Note**: This is a Proof of Concept for demonstration and educational purposes. For production use, add proper error handling, security measures, rate limiting, and human oversight.
+## 🛠️ Développement
+
+### Ajouter un Nouvel Agent
+
+1. Créer un fichier dans `agents/`
+2. Hériter de `BaseAgent`
+3. Implémenter la méthode `process(state)`
+4. Ajouter au graphe dans `orchestrator.py`
+5. Mettre à jour la logique de routage dans le MCP
+
+### Étendre l'État
+
+Ajouter de nouveaux champs à `SalesState` dans `state.py` :
+
+```python
+class SalesState(TypedDict):
+    # ... champs existants ...
+    votre_nouveau_champ: VotreType
+```
+
+## 🧪 Tests
+
+Lancer différents scénarios pour tester le comportement des agents :
+
+```bash
+# Tester la qualification
+python main.py scenario pme_shadow_ia
+
+# Tester la négociation
+python main.py scenario objection_budget
+
+# Tester l'escalade
+python main.py scenario escalade_grand_compte
+```
+
+## 📈 Évolutions Futures
+
+- [ ] Intégration base vectorielle pour mémoire sémantique
+- [ ] Intégration CRM réelle (HubSpot, Salesforce)
+- [ ] Dashboard analytics
+- [ ] Intégration email/SMS automatique
+- [ ] Webhook temps réel
+- [ ] A/B testing des offres
+
+## 🙏 Technologies
+
+Construit avec :
+- [LangGraph](https://github.com/langchain-ai/langgraph) - Orchestration multi-agents
+- [LangChain](https://github.com/langchain-ai/langchain) - Framework LLM
+- [OpenAI GPT-4](https://openai.com) - Modèle de langage
+- [Anthropic Claude](https://anthropic.com) - LLM alternatif
+
+---
+
+**IAfluence** - L'IA utile, au bon endroit, au bon rythme.
