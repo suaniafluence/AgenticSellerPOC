@@ -1,0 +1,41 @@
+# Configuration for PR labeler
+
+# Documentation changes
+documentation:
+  - '**/*.md'
+  - 'docs/**/*'
+
+# CI/CD changes
+ci/cd:
+  - '.github/workflows/**/*'
+  - '.github/actions/**/*'
+  - 'Dockerfile'
+  - 'docker-compose.yml'
+  - '.dockerignore'
+
+# Python code
+python:
+  - '**/*.py'
+  - 'pyproject.toml'
+  - 'setup.py'
+  - 'setup.cfg'
+
+# Tests
+tests:
+  - 'tests/**/*'
+  - '**/*test*.py'
+
+# Dependencies
+dependencies:
+  - 'requirements*.txt'
+  - 'pyproject.toml'
+  - 'setup.py'
+
+# Configuration
+configuration:
+  - '**/*.yml'
+  - '**/*.yaml'
+  - '**/*.toml'
+  - '**/*.ini'
+  - '**/*.cfg'
+  - '.env.example'
