@@ -1,4 +1,4 @@
-"""Supervisor Agent."""
+"""Supervisor Agent - IAfluence."""
 import json
 from typing import Any, Dict
 from langchain_core.prompts import ChatPromptTemplate
@@ -7,13 +7,13 @@ from .base import BaseAgent
 
 class SupervisorAgent(BaseAgent):
     """
-    Agent responsible for supervising the overall sales process.
+    Agent superviseur IAfluence.
 
-    Analyzes the conversation state and decides:
-    - Whether the goal is achieved
-    - Which agent should handle the next step
-    - When to escalate to humans
-    - When to close the conversation
+    Analyse l'état de la conversation et décide :
+    - Si l'objectif est atteint (conversion ou qualification)
+    - Quel agent doit intervenir ensuite
+    - Quand escalader vers Suan Tay
+    - Quand clôturer la conversation
     """
 
     def __init__(self, **kwargs):
@@ -21,61 +21,69 @@ class SupervisorAgent(BaseAgent):
 
     def get_system_prompt(self) -> str:
         """Get the system prompt for the supervisor."""
-        return """You are a Supervisor AI agent, overseeing the entire sales process.
+        return """Tu es l'agent Superviseur d'IAfluence, qui orchestre le processus commercial.
 
-Your role is to:
-1. Analyze the current state of the conversation
-2. Determine if the goal is achieved (conversion or qualification)
-3. Decide which agent should handle the next step
-4. Identify when human escalation is needed
-5. Recognize when the conversation should end
+Ton rôle est de :
+1. Analyser l'état actuel de la conversation
+2. Déterminer si l'objectif est atteint (rendez-vous, conversion, qualification)
+3. Décider quel agent doit intervenir ensuite
+4. Identifier quand une escalade vers Suan Tay est nécessaire
+5. Reconnaître quand la conversation doit se terminer
 
-Decision criteria:
+CONTEXTE IAFLUENCE :
+Cabinet de conseil spécialisé dans l'accompagnement IA pour PME/ETI.
+Objectif principal : obtenir un rendez-vous avec Suan Tay (diagnostic gratuit).
+Suan Tay intervient personnellement sur toutes les missions.
 
-CONVERTED (Goal achieved):
-- Prospect explicitly accepted the offer
-- Clear commitment to purchase or start trial
-- Action: Route to CRM_Agent
+CRITÈRES DE DÉCISION :
 
-NEEDS_NEGOTIATION:
-- Prospect raised objections or price concerns
-- Wants modifications to the offer
-- Action: Route to Negotiator
+CONVERTI (Objectif atteint) :
+- Prospect accepte explicitement le diagnostic gratuit ou une offre
+- Engagement clair pour un rendez-vous ou démarrage
+- Demande le lien de prise de RDV
+- Action : Router vers CRM_Agent
 
-NEEDS_NEW_OFFER:
-- Current offer not suitable
-- Prospect's needs changed
-- Action: Route to Seller
+NEGOCIATION_NECESSAIRE :
+- Prospect soulève des objections (prix, timing, etc.)
+- Demande des modifications à la proposition
+- Action : Router vers Negotiator
 
-ESCALATE:
-- Complex custom requirements
-- Very large deal requiring approval
-- Too many negotiation rounds (3+)
-- Prospect explicitly asks for human contact
-- Action: Route to CRM_Agent with escalation flag
+NOUVELLE_OFFRE_NECESSAIRE :
+- Offre actuelle ne correspond pas au besoin
+- Besoins du prospect ont évolué
+- Demande une autre option
+- Action : Router vers Seller
 
-CLOSE:
-- Prospect clearly not interested
-- Unqualified lead with no potential
-- Conversation reached natural conclusion
-- Action: Route to CRM_Agent
+ESCALADE :
+- Besoins très spécifiques ou complexes (ETI, grand compte)
+- Trop de tours de négociation (3+)
+- Prospect demande explicitement à parler au fondateur
+- Projet stratégique à fort enjeu
+- Action : Router vers CRM_Agent avec flag escalade
 
-CONTINUE:
-- Need more information
-- Prospect engaged but undecided
-- Action: Wait for more input
+CLOTURER :
+- Prospect clairement pas intéressé
+- Lead non qualifié sans potentiel
+- Conversation arrivée à conclusion naturelle
+- Action : Router vers CRM_Agent
 
-Respond with valid JSON:
+CONTINUER :
+- Besoin de plus d'informations
+- Prospect engagé mais indécis
+- Questions en suspens
+- Action : Attendre plus d'input
+
+Réponds avec un JSON valide :
 {
-    "analysis": "Brief analysis of current situation",
-    "prospect_sentiment": "positive|neutral|negative",
+    "analysis": "Analyse brève de la situation actuelle",
+    "prospect_sentiment": "positif|neutre|negatif",
     "goal_achieved": true|false,
     "conversion_probability": 0-100,
     "next_agent": "classifier|seller|negotiator|crm|none",
     "should_escalate": true|false,
     "should_close": true|false,
-    "reasoning": "Explanation of decision",
-    "recommended_action": "What should happen next"
+    "reasoning": "Explication de ta décision",
+    "recommended_action": "Ce qui devrait se passer ensuite"
 }"""
 
     def process(self, state: Dict[str, Any]) -> Dict[str, Any]:
@@ -99,25 +107,25 @@ Respond with valid JSON:
         # Create prompt
         prompt = ChatPromptTemplate.from_messages([
             ("system", self.get_system_prompt()),
-            ("human", """Analyze this sales conversation and decide next steps:
+            ("human", """Analyse cette conversation commerciale et décide des prochaines étapes :
 
-Current message from prospect: {message}
+Message actuel du prospect : {message}
 
-Context:
-- Lead Type: {lead_type}
-- Lead Score: {lead_score}
-- Qualified: {qualified}
-- Offers Made: {offers_count}
-- Objections: {objections_count}
-- Negotiation Rounds: {negotiation_count}
-- Converted: {converted}
-- Escalated: {escalated}
-- Last Agent: {last_agent}
+Contexte :
+- Type de lead : {lead_type}
+- Score du lead : {lead_score}
+- Qualifié : {qualified}
+- Offres faites : {offers_count}
+- Objections : {objections_count}
+- Tours de négociation : {negotiation_count}
+- Converti : {converted}
+- Escaladé : {escalated}
+- Dernier agent : {last_agent}
 
-Recent conversation:
+Conversation récente :
 {history}
 
-Provide your analysis and routing decision in JSON format.""")
+Fournis ton analyse et ta décision de routage au format JSON.""")
         ])
 
         # Format data
@@ -127,7 +135,7 @@ Provide your analysis and routing decision in JSON format.""")
         chain = prompt | self.llm
         response = chain.invoke({
             "message": current_message,
-            "lead_type": context["lead_type"] or "unknown",
+            "lead_type": context["lead_type"] or "inconnu",
             "lead_score": context["lead_score"],
             "qualified": context["qualified"],
             "offers_count": context["offers_made_count"],
@@ -136,7 +144,7 @@ Provide your analysis and routing decision in JSON format.""")
             "converted": context["converted"],
             "escalated": context["escalated"],
             "last_agent": current_agent,
-            "history": history or "No previous conversation"
+            "history": history or "Pas de conversation précédente"
         })
 
         # Parse response
@@ -151,11 +159,11 @@ Provide your analysis and routing decision in JSON format.""")
             analysis = json.loads(content)
 
             # Update state based on analysis
-            state["sentiment"] = analysis.get("prospect_sentiment", "neutral")
+            state["sentiment"] = analysis.get("prospect_sentiment", "neutre")
 
             # Add insight
             state["key_insights"].append(
-                f"Supervisor: {analysis.get('analysis', 'Analysis unavailable')}"
+                f"Superviseur : {analysis.get('analysis', 'Analyse non disponible')}"
             )
 
             # Update agent tracking

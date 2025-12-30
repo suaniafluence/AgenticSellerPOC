@@ -1,108 +1,110 @@
-"""Example scenarios for testing the sales agent system."""
+"""Scénarios d'exemple pour tester le système commercial IAfluence."""
 
 SCENARIOS = {
-    "hot_lead": {
-        "name": "Hot Lead - Quick Conversion",
-        "description": "A qualified prospect ready to buy, minimal negotiation needed",
+    "pme_shadow_ia": {
+        "name": "PME - Urgence Shadow IA",
+        "description": "Dirigeant de PME inquiet de l'usage non contrôlé de ChatGPT par ses équipes",
         "messages": [
-            "Hi, I'm the CTO of a 50-person SaaS startup. We need a sales automation solution ASAP. We have budget approved for up to $500/month. What can you offer?",
-            "That sounds good! Can we get a 14-day trial to test it out?",
-            "Perfect! Let's do it. Sign us up for the PROFESSIONAL plan with the trial."
+            "Bonjour, je suis le DG d'une PME industrielle de 80 personnes. J'ai découvert que mes équipes utilisent ChatGPT pour tout et n'importe quoi, y compris pour des données clients. Je suis très inquiet, comment pouvez-vous m'aider ?",
+            "Oui c'est urgent, on a des contrats sensibles avec des clients automobiles. Je ne sais pas ce qui a pu fuiter. Qu'est-ce que vous proposez concrètement ?",
+            "Un diagnostic gratuit ça m'intéresse. Je peux avoir un créneau cette semaine ?"
         ]
     },
 
-    "price_negotiation": {
-        "name": "Price Negotiation - Multiple Rounds",
-        "description": "Prospect interested but concerned about price, needs negotiation",
+    "eti_strategie_ia": {
+        "name": "ETI - Stratégie IA complète",
+        "description": "DSI d'une ETI qui cherche à structurer une approche IA globale",
         "messages": [
-            "Hello, I run a small e-commerce business with 15 employees. I'm looking for a CRM solution but I'm on a tight budget.",
-            "That's more than I wanted to spend. I was thinking more like $50-75/month. Do you have anything in that range?",
-            "Hmm, still a bit high. What if I commit to a full year upfront? Can you give me a better discount?",
-            "Okay, that works for me. Let's go with the annual plan at 20% off."
+            "Je suis DSI d'une ETI de 500 collaborateurs dans le secteur des services. Notre DG veut qu'on 'fasse de l'IA' mais personne ne sait vraiment par où commencer. On a besoin d'une vision structurée.",
+            "On a déjà fait quelques POC avec des ESN mais ça n'a rien donné de concret. On aimerait une approche plus stratégique, pas juste technique.",
+            "Quel serait le budget pour un accompagnement stratégie + gouvernance ? Et ça prendrait combien de temps ?",
+            "C'est dans notre fourchette. Pouvez-vous me faire une proposition formelle que je puisse présenter au COMEX ?"
         ]
     },
 
-    "feature_concerns": {
-        "name": "Feature Requirements - Needs Specific Functionality",
-        "description": "Prospect has specific feature requirements and needs clarification",
+    "formation_dirigeants": {
+        "name": "Formation Dirigeants",
+        "description": "DRH qui cherche à former le CODIR sur l'IA",
         "messages": [
-            "I'm interested in your product, but I need to know - does it integrate with Salesforce? That's a must-have for us.",
-            "Good to know. What about custom reporting and analytics? We need very detailed sales metrics.",
-            "And one more thing - we're a team of 75 people. Can your system handle that many users?",
-            "Excellent! I think the BUSINESS plan would work for us. Let's proceed."
+            "Bonjour, je suis DRH d'une entreprise de 150 personnes. Notre CODIR est complètement perdu face à l'IA. Ils entendent parler de ChatGPT, Copilot, etc. mais ne comprennent pas les enjeux ni les risques.",
+            "On aimerait une formation d'une journée pour les sensibiliser. Quelque chose de concret, pas trop technique. Ils sont 8 personnes.",
+            "Vous faites aussi les équipes ? On a des managers qui auraient besoin de comprendre comment utiliser l'IA au quotidien sans prendre de risques.",
+            "OK, envoyez-moi une proposition pour le CODIR + une option pour les managers."
         ]
     },
 
-    "timing_objection": {
-        "name": "Timing Objection - Not Ready Now",
-        "description": "Prospect interested but wants to wait, needs nurturing",
+    "poc_souverain": {
+        "name": "POC IA Souveraine",
+        "description": "Responsable IT qui veut tester une solution IA interne",
         "messages": [
-            "Hi, I've been researching sales tools and came across your product. Looks interesting.",
-            "It looks good, but we're not quite ready to make a decision yet. We're currently in the middle of Q4 planning.",
-            "Maybe in January when our new budget kicks in. Can you follow up with me then?",
+            "Bonjour, je suis responsable IT dans une entreprise du secteur santé. On ne peut pas utiliser les solutions cloud américaines pour des raisons réglementaires. Est-ce que vous pouvez nous aider à déployer un LLM en interne ?",
+            "On a des serveurs dédiés, on voudrait tester un modèle open source type Mistral ou Llama. C'est faisable ?",
+            "Un POC sur 2-3 cas d'usage, ça coûterait combien ? Et quel délai ?",
+            "C'est raisonnable. On peut commencer quand ?"
         ]
     },
 
-    "enterprise_escalation": {
-        "name": "Enterprise Deal - Requires Escalation",
-        "description": "Large enterprise deal with complex requirements, needs human involvement",
+    "objection_budget": {
+        "name": "Objection Budget - Négociation",
+        "description": "Prospect intéressé mais avec un budget limité",
         "messages": [
-            "Hello, I represent a 500-person enterprise in the healthcare sector. We're looking for an enterprise-grade sales solution with very specific compliance requirements.",
-            "We need HIPAA compliance, SSO integration with Okta, custom SLA agreements, and a dedicated support team. Can your system handle all of that?",
-            "We're also looking at a multi-year contract, potentially 3-5 years. What kind of volume discounts can you offer for a deal this size?",
-            "This is getting complex. I think we need to involve our procurement team and legal. Do you have someone senior I can speak with about custom enterprise terms?"
+            "Bonjour, j'ai une PME de 40 personnes et on aimerait former nos équipes à l'IA mais on n'a pas beaucoup de budget.",
+            "3500€ pour une journée de formation c'est au-dessus de notre budget. On pensait plutôt à 1500-2000€ max.",
+            "Une demi-journée ça pourrait être bien pour démarrer. Et si ça marche, on pourrait envisager la suite.",
+            "D'accord pour la demi-journée découverte. On signe où ?"
         ]
     },
 
-    "competitor_comparison": {
-        "name": "Competitor Comparison - Evaluating Options",
-        "description": "Prospect comparing with competitors, needs strong value proposition",
+    "objection_timing": {
+        "name": "Objection Timing - Pas maintenant",
+        "description": "Prospect intéressé mais veut reporter",
         "messages": [
-            "I'm currently using [Competitor X] but I'm not fully satisfied. What makes your solution different?",
-            "That's interesting, but [Competitor X] is offering me a deal at $250/month for similar features. Why should I switch to you?",
-            "Okay, the trial period is longer which is good. If I like it, I might switch. Let's start with the trial.",
+            "Bonjour, je suis intéressé par vos services d'accompagnement IA. On est une PME tech de 60 personnes.",
+            "Votre approche me plaît, mais là on est en pleine migration de notre ERP. Ce n'est pas le bon moment pour lancer un projet IA en plus.",
+            "Peut-être au Q2 2025 ? En attendant vous pouvez m'envoyer de la documentation ?",
         ]
     },
 
-    "unqualified_cold": {
-        "name": "Unqualified Cold Lead",
-        "description": "Cold lead with no budget or decision authority, should be nurtured",
+    "lead_froid": {
+        "name": "Lead Froid - Curiosité",
+        "description": "Prospect en simple veille, pas de projet concret",
         "messages": [
-            "Hey, just browsing. What do you guys do?",
-            "Oh, CRM stuff. Yeah, we might need something like that eventually. How much does it cost?",
-            "Whoa, that's way too expensive for us right now. We're just a 3-person team.",
-            "Nah, I don't think so. Maybe in the future. Thanks anyway."
+            "Bonjour, je fais de la veille sur l'IA pour mon entreprise. Qu'est-ce que vous proposez exactement ?",
+            "D'accord, et ça coûte combien en général ce genre d'accompagnement ?",
+            "Ah oui c'est costaud quand même. On est une petite équipe de 8, je ne suis pas sûr qu'on ait les moyens.",
+            "Je vais y réfléchir. Merci pour les infos."
         ]
     },
 
-    "decision_maker_check": {
-        "name": "Not a Decision Maker - Needs Approval",
-        "description": "Prospect is interested but needs manager approval",
+    "escalade_grand_compte": {
+        "name": "Escalade Grand Compte",
+        "description": "Demande complexe d'un grand compte nécessitant l'intervention du fondateur",
         "messages": [
-            "Hi, I'm a sales manager at a medium-sized company. I've been tasked with finding a new CRM for our 40-person sales team.",
-            "This looks really good! The BUSINESS plan seems perfect for us.",
-            "I love it, but I need to get approval from my VP of Sales first. Can you send me some materials I can share with them?",
-            "Actually, would it be possible for someone from your team to do a demo for my VP? That might help get approval faster."
+            "Bonjour, je représente un groupe industriel de 8000 collaborateurs. Nous cherchons un partenaire pour définir notre stratégie IA groupe avec des enjeux de souveraineté importants.",
+            "Nous avons des filiales dans 5 pays européens. Il nous faut une approche qui prenne en compte les réglementations locales, le RGPD, et potentiellement l'AI Act.",
+            "Nous avons un budget conséquent mais nous voulons d'abord valider que vous avez l'envergure pour ce type de projet. Pouvez-vous nous mettre en contact avec votre direction ?",
+            "Parfait, je souhaite un call avec votre fondateur pour discuter des modalités."
         ]
     },
 
-    "multiple_objections": {
-        "name": "Multiple Objections - Complex Sale",
-        "description": "Prospect has multiple concerns that need to be addressed",
+    "conversion_rapide": {
+        "name": "Conversion Rapide",
+        "description": "Prospect très motivé, conversion immédiate",
         "messages": [
-            "I'm interested, but I have some concerns. First, the price seems high for what we need.",
-            "Also, we're already using another tool and migration seems like a pain. How hard is it to switch?",
-            "And what about training? Our team isn't super tech-savvy. Do you provide onboarding?",
-            "Okay, those are good points. But I still need to think about it. It's a big decision."
+            "Bonjour, j'ai lu votre article sur le Shadow IA sur LinkedIn. On a exactement ce problème chez nous. Je suis le CEO d'une boîte de 120 personnes.",
+            "Je veux qu'on prenne les devants avant qu'il y ait un incident. Vous faites quoi comme diagnostic ?",
+            "Parfait, c'est exactement ce qu'il nous faut. Comment on fait pour prendre RDV ?"
         ]
     },
 
-    "rapid_conversion": {
-        "name": "Rapid Fire Conversion",
-        "description": "Very hot lead, knows exactly what they want, quick close",
+    "accompagnement_global": {
+        "name": "Accompagnement Global",
+        "description": "Prospect qui veut un accompagnement complet sur plusieurs mois",
         "messages": [
-            "I need your ENTERPRISE plan for 200 users, starting immediately. Already did my research, you're the best fit.",
-            "Yes, let's do it. What's the next step?",
+            "Bonjour, je suis directeur de la transformation d'une ETI de 300 personnes. On veut vraiment prendre le virage de l'IA mais de façon structurée.",
+            "On a besoin de tout : une stratégie claire, former nos équipes, et potentiellement déployer des outils en interne. Mais on veut y aller progressivement.",
+            "Votre formule d'accompagnement global sur plusieurs mois m'intéresse. Comment ça fonctionne concrètement ?",
+            "Un engagement de 3 mois pour commencer ça me va. On peut démarrer en janvier ?"
         ]
     }
 }
@@ -110,7 +112,7 @@ SCENARIOS = {
 
 def list_scenarios():
     """List all available scenarios."""
-    print("\n📚 AVAILABLE SCENARIOS:\n")
+    print("\n📚 SCÉNARIOS DISPONIBLES - IAFLUENCE :\n")
     for key, scenario in SCENARIOS.items():
         print(f"  {key:25} - {scenario['name']}")
         print(f"  {' '*25}   {scenario['description']}\n")

@@ -1,4 +1,4 @@
-"""Negotiator Agent."""
+"""Negotiator Agent - IAfluence."""
 import json
 from typing import Any, Dict
 from langchain_core.prompts import ChatPromptTemplate
@@ -7,10 +7,10 @@ from .base import BaseAgent
 
 class NegotiatorAgent(BaseAgent):
     """
-    Agent responsible for handling objections and negotiating terms.
+    Agent de négociation IAfluence.
 
-    Analyzes objections, adjusts offers, and tries to find mutually
-    beneficial solutions to close the deal.
+    Gère les objections, ajuste les propositions et trouve des solutions
+    mutuellement satisfaisantes pour conclure l'accompagnement.
     """
 
     def __init__(self, **kwargs):
@@ -18,49 +18,76 @@ class NegotiatorAgent(BaseAgent):
 
     def get_system_prompt(self) -> str:
         """Get the system prompt for the negotiator."""
-        return """You are a Negotiator AI agent, specialized in handling objections and finding win-win solutions.
+        return """Tu es l'agent de négociation d'IAfluence, spécialisé dans la gestion des objections pour les missions de conseil IA.
 
-Your role is to:
-1. Identify and categorize objections (price, features, timing, authority, etc.)
-2. Address objections with empathy and evidence
-3. Adjust offers when appropriate (within limits)
-4. Find creative solutions that satisfy both parties
-5. Know when to escalate to human sales team
+Ton rôle est de :
+1. Identifier et catégoriser les objections (budget, timing, décision, confiance, etc.)
+2. Répondre avec empathie et des arguments concrets
+3. Ajuster les propositions dans les limites autorisées
+4. Trouver des solutions créatives qui satisfont les deux parties
+5. Savoir quand proposer un appel avec Suan Tay, le fondateur
 
-Negotiation guidelines:
-- Maximum discount: 30% (only for enterprise deals with long commitments)
-- Can extend trial period up to 30 days
-- Can add features from higher tiers for medium/enterprise
-- Always require commitment for larger discounts
-- Budget objections: offer payment plans, phased implementation
-- Feature objections: explain value or suggest alternatives
-- Timing objections: create urgency with limited-time offers
+POSITIONNEMENT IAFLUENCE :
+IAfluence = L'IA utile, au bon endroit, au bon rythme.
+Approche pragmatique, souveraine et orientée valeur métier.
+Suan Tay intervient personnellement sur chaque mission.
 
-Objection categories:
-- PRICE: "Too expensive", "Over budget", "Need cheaper option"
-- FEATURES: "Missing X feature", "Need more/less functionality"
-- TIMING: "Not right now", "Need to wait", "Next quarter"
-- AUTHORITY: "Need to ask boss", "Requires approval"
-- COMPETITION: "Competitor offers more", "Already using X"
-- TRUST: "Not sure if it works", "Need proof", "What about support"
+RÈGLES DE NÉGOCIATION :
 
-Respond with valid JSON:
+1. FLEXIBILITÉ TARIFAIRE :
+   - Remise max : 15% (pour engagement trimestriel ou annuel)
+   - Possibilité de paiement échelonné (3-4 mensualités)
+   - Diagnostic gratuit toujours proposable comme première étape
+   - POC pilote à tarif réduit (-20%) pour tester l'approche
+
+2. FLEXIBILITÉ CONTENU :
+   - Ajustement du périmètre plutôt que du prix
+   - Possibilité de démarrer petit et étendre ensuite
+   - Formation demi-journée découverte (500€)
+   - Accompagnement progressif sur plusieurs phases
+
+3. ESCALADE :
+   - Après 3 tours de négociation : proposer appel avec Suan Tay
+   - Demande client explicite de parler au fondateur
+   - Besoins très spécifiques ou complexes
+
+CATÉGORIES D'OBJECTIONS :
+
+- BUDGET : "Trop cher", "Budget serré", "Pas les moyens"
+  → Proposer échelonnement, phase pilote, diagnostic gratuit, réduction périmètre
+
+- TIMING : "Pas maintenant", "L'année prochaine", "Pas prioritaire"
+  → Créer urgence (risques Shadow IA), proposer démarrage léger, diagnostic préparatoire
+
+- AUTORITE : "Dois en parler à...", "Pas seul décideur", "Validation nécessaire"
+  → Proposer présentation pour le comité, documentation, call avec décideurs
+
+- CONFIANCE : "Pas sûr du ROI", "Besoin de références", "C'est nouveau pour nous"
+  → Témoignages clients, étude de cas, garantie satisfaction, démarrage progressif
+
+- CONCURRENCE : "On travaille déjà avec...", "J'ai une autre proposition"
+  → Différenciation IAfluence (approche souveraine, sur-mesure, fondateur impliqué)
+
+- TECHNIQUE : "Nos équipes ne sont pas prêtes", "Infrastructure pas adaptée"
+  → Formation préalable, accompagnement progressif, évaluation maturité
+
+Réponds avec un JSON valide :
 {
-    "objection_category": "PRICE|FEATURES|TIMING|AUTHORITY|COMPETITION|TRUST",
-    "objection_summary": "Brief summary of the objection",
-    "response_strategy": "How you will address it",
+    "objection_category": "BUDGET|TIMING|AUTORITE|CONFIANCE|CONCURRENCE|TECHNIQUE",
+    "objection_summary": "Résumé bref de l'objection",
+    "response_strategy": "Comment tu vas l'adresser",
     "adjusted_offer": {
-        "product": "same or different product",
-        "price": adjusted_price,
-        "discount": 0-30,
-        "trial_period": days,
-        "commitment_period": months,
-        "conditions": ["new conditions"],
-        "features": ["feature list"]
+        "offre": "type d'offre ajustée",
+        "tarif": tarif_ajusté,
+        "remise": 0-15,
+        "duree": "durée ajustée",
+        "engagement": "ponctuel|trimestriel|annuel",
+        "conditions": ["nouvelles conditions"],
+        "contenu": ["éléments inclus"]
     },
-    "response": "Your response to the prospect",
+    "response": "Ta réponse au prospect (conversationnelle et empathique)",
     "should_escalate": true|false,
-    "escalation_reason": "Why escalation is needed (if applicable)"
+    "escalation_reason": "Raison de l'escalade (si applicable)"
 }"""
 
     def process(self, state: Dict[str, Any]) -> Dict[str, Any]:
@@ -78,7 +105,7 @@ Respond with valid JSON:
             state["next_action"] = "escalate"
             state["messages"].append({
                 "role": "assistant",
-                "content": "I appreciate your interest and want to ensure we find the perfect solution for you. Let me connect you with our senior sales specialist who can discuss custom options tailored to your specific needs.",
+                "content": "Je comprends vos préoccupations et je souhaite vraiment trouver une solution adaptée à vos besoins. Je vous propose d'organiser un échange direct avec Suan Tay, notre fondateur, qui pourra vous proposer un accompagnement totalement sur-mesure. Seriez-vous disponible pour un appel de 30 minutes cette semaine ?",
                 "metadata": {"agent": "negotiator", "action": "escalate"}
             })
             return state
@@ -86,29 +113,30 @@ Respond with valid JSON:
         # Create prompt
         prompt = ChatPromptTemplate.from_messages([
             ("system", self.get_system_prompt()),
-            ("human", """Handle this negotiation:
+            ("human", """Gère cette négociation :
 
-Prospect's message: {message}
+Message du prospect : {message}
 
-Current offer:
-- Product: {product}
-- Price: ${price}/month
-- Discount: {discount}%
-- Trial: {trial_period} days
-- Features: {features}
+Offre actuelle :
+- Type : {offre}
+- Tarif : {tarif}€
+- Remise : {remise}%
+- Durée : {duree}
+- Contenu : {contenu}
 
-Previous objections: {previous_objections}
-Negotiation round: {negotiation_round}
+Objections précédentes : {previous_objections}
+Tour de négociation : {negotiation_round}
 
-Lead context:
-- Sector: {sector}
-- Company size: {company_size}
-- Lead score: {lead_score}
+Contexte du lead :
+- Secteur : {sector}
+- Taille entreprise : {company_size}
+- Score du lead : {lead_score}
+- Maturité IA : {maturite_ia}
 
-Conversation history:
+Historique de conversation :
 {history}
 
-Provide your negotiation response in JSON format.""")
+Fournis ta réponse de négociation au format JSON.""")
         ])
 
         # Format data
@@ -118,17 +146,18 @@ Provide your negotiation response in JSON format.""")
         chain = prompt | self.llm
         response = chain.invoke({
             "message": current_message,
-            "product": current_offer.get("product", "N/A"),
-            "price": current_offer.get("price", 0),
-            "discount": current_offer.get("discount", 0),
-            "trial_period": current_offer.get("trial_period", 0),
-            "features": ", ".join(current_offer.get("features", [])),
-            "previous_objections": ", ".join(objections[-3:]) if objections else "None",
+            "offre": current_offer.get("offre", "N/A"),
+            "tarif": current_offer.get("tarif", 0),
+            "remise": current_offer.get("remise", 0),
+            "duree": current_offer.get("duree", "N/A"),
+            "contenu": ", ".join(current_offer.get("contenu", [])),
+            "previous_objections": ", ".join(objections[-3:]) if objections else "Aucune",
             "negotiation_round": negotiation_count + 1,
-            "sector": lead_info.get("sector", "unknown"),
-            "company_size": lead_info.get("company_size", "unknown"),
+            "sector": lead_info.get("sector", "inconnu"),
+            "company_size": lead_info.get("company_size", "inconnu"),
             "lead_score": state.get("lead_score", 0),
-            "history": history or "No previous conversation"
+            "maturite_ia": lead_info.get("maturite_ia", "debutant"),
+            "history": history or "Pas de conversation précédente"
         })
 
         # Parse response
@@ -175,7 +204,7 @@ Provide your negotiation response in JSON format.""")
                 state["escalated"] = True
                 state["next_action"] = "escalate"
                 state["key_insights"].append(
-                    f"Escalation needed: {negotiation.get('escalation_reason', 'Unknown')}"
+                    f"Escalade nécessaire : {negotiation.get('escalation_reason', 'Raison non précisée')}"
                 )
             else:
                 state["next_action"] = "wait_for_response"
