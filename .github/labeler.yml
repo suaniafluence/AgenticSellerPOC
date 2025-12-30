@@ -1,39 +1,41 @@
-# Configuration for actions/labeler
-# See https://github.com/actions/labeler
+# Configuration for PR labeler
 
+# Documentation changes
 documentation:
-  - changed-files:
-      - any-glob-to-any-file:
-          - '**/*.md'
-          - 'docs/**/*'
+  - '**/*.md'
+  - 'docs/**/*'
 
-dependencies:
-  - changed-files:
-      - any-glob-to-any-file:
-          - 'requirements.txt'
-          - 'setup.py'
-          - 'pyproject.toml'
+# CI/CD changes
+ci/cd:
+  - '.github/workflows/**/*'
+  - '.github/actions/**/*'
+  - 'Dockerfile'
+  - 'docker-compose.yml'
+  - '.dockerignore'
 
-agents:
-  - changed-files:
-      - any-glob-to-any-file:
-          - 'agents/**/*'
+# Python code
+python:
+  - '**/*.py'
+  - 'pyproject.toml'
+  - 'setup.py'
+  - 'setup.cfg'
 
+# Tests
 tests:
-  - changed-files:
-      - any-glob-to-any-file:
-          - '**/*test*.py'
-          - 'tests/**/*'
+  - 'tests/**/*'
+  - '**/*test*.py'
 
-ci-cd:
-  - changed-files:
-      - any-glob-to-any-file:
-          - '.github/**/*'
+# Dependencies
+dependencies:
+  - 'requirements*.txt'
+  - 'pyproject.toml'
+  - 'setup.py'
 
+# Configuration
 configuration:
-  - changed-files:
-      - any-glob-to-any-file:
-          - 'config.py'
-          - '.env.example'
-          - '**/*.yml'
-          - '**/*.yaml'
+  - '**/*.yml'
+  - '**/*.yaml'
+  - '**/*.toml'
+  - '**/*.ini'
+  - '**/*.cfg'
+  - '.env.example'

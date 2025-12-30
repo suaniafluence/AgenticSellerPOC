@@ -1,197 +1,130 @@
-# 🚀 IAfluence - Assistant Commercial IA Multi-Agents
+# AgenticSellerPOC
 
-Système de vente autonome multi-agents propulsé par **LangGraph** pour accompagner les PME et ETI dans leur transformation IA.
+[![CI Pipeline](https://github.com/suaniafluence/AgenticSellerPOC/workflows/CI%20Pipeline/badge.svg)](https://github.com/suaniafluence/AgenticSellerPOC/actions)
+[![codecov](https://codecov.io/gh/suaniafluence/AgenticSellerPOC/branch/main/graph/badge.svg)](https://codecov.io/gh/suaniafluence/AgenticSellerPOC)
+[![Python Version](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## 🎯 À propos d'IAfluence
+Agentic Seller Proof of Concept
 
-**IAfluence** accompagne les PME et ETI dans la structuration, la sécurisation et l'industrialisation de leurs usages de l'intelligence artificielle.
+## Features
 
-> *L'IA utile, au bon endroit, au bon rythme.*
+- 🚀 Modern Python project structure
+- 🔄 Complete CI/CD pipeline with GitHub Actions
+- 🧪 Automated testing with pytest
+- 📦 Docker support
+- 🔒 Security scanning with Bandit and CodeQL
+- 📊 Code coverage tracking
+- 🎨 Code formatting with Black and Ruff
 
-### Les 3 Piliers IAfluence
+## Installation
 
-| Pilier | Description |
-|--------|-------------|
-| **Stratégie IA & Gouvernance** | Charte IA, lutte contre le Shadow IA, trajectoire vers la souveraineté |
-| **Formation & Montée en compétences** | Dirigeants, équipes métiers, équipes IT |
-| **Expertise technique & POC** | Infrastructure IA souveraine, déploiement LLM, POC ciblés |
+### Using pip
 
-## 🏗️ Architecture Multi-Agents
-
-Le système utilise 5 agents spécialisés orchestrés par LangGraph :
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                    MCP Decision Node                     │
-│              (Multi-Agent Control Plane)                 │
-└────────────────────┬────────────────────────────────────┘
-                     │
-        ┌────────────┼────────────┐
-        ▼            ▼            ▼
-┌──────────────┐ ┌──────────────┐ ┌──────────────┐
-│  Classifier  │ │    Seller    │ │  Negotiator  │
-│              │ │              │ │              │
-│ - Qualifier  │ │ - Proposer   │ │ - Gérer      │
-│ - Scorer     │ │   offres     │ │   objections │
-│ - Analyser   │ │ - Pitcher    │ │ - Ajuster    │
-└──────────────┘ └──────────────┘ └──────────────┘
-        │            │            │
-        └────────────┼────────────┘
-                     ▼
-        ┌────────────────────────┐
-        │      Supervisor        │
-        │ - Analyser état        │
-        │ - Router décisions     │
-        │ - Détecter conversion  │
-        └────────────┬───────────┘
-                     ▼
-        ┌────────────────────────┐
-        │       CRM Agent        │
-        │ - Synchroniser data    │
-        │ - Créer tâches suivi   │
-        │ - Générer insights     │
-        └────────────────────────┘
-```
-
-### Description des Agents
-
-| Agent | Rôle | Capacités |
-|-------|------|-----------|
-| **Classifier** | Qualification | Détecte type de lead (chaud/tiède/froid), secteur, taille, maturité IA, problématiques. Score 0-100. |
-| **Seller** | Création d'offres | Propose des offres personnalisées selon les besoins : Diagnostic, Stratégie, Formation, Expertise, Accompagnement global. |
-| **Negotiator** | Gestion objections | Identifie les objections (budget, timing, autorité, confiance), ajuste les propositions, trouve des solutions. |
-| **Supervisor** | Orchestration | Analyse l'état de la conversation, route vers les bons agents, détecte la conversion, déclenche l'escalade. |
-| **CRM Agent** | Gestion données | Synchronise avec le CRM, crée les tâches de suivi, fournit les coordonnées de Suan Tay. |
-
-## 🚀 Démarrage Rapide
-
-### Installation
-
-1. **Cloner le repository**
 ```bash
-git clone <repository-url>
+pip install agenticsellerpoc
+```
+
+### From source
+
+```bash
+git clone https://github.com/suaniafluence/AgenticSellerPOC.git
+cd AgenticSellerPOC
+pip install -r requirements.txt
+pip install -e .
+```
+
+### Using Docker
+
+```bash
+docker build -t agenticsellerpoc .
+docker run agenticsellerpoc
+```
+
+## Development
+
+### Setup Development Environment
+
+1. Clone the repository:
+```bash
+git clone https://github.com/suaniafluence/AgenticSellerPOC.git
 cd AgenticSellerPOC
 ```
 
-2. **Installer les dépendances**
+2. Create a virtual environment:
 ```bash
-pip install -r requirements.txt
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-3. **Configurer l'environnement**
+3. Install development dependencies:
 ```bash
-cp .env.example .env
-# Éditer .env et ajouter vos clés API
+pip install -r requirements-dev.txt
 ```
 
-Clés API requises :
-- `OPENAI_API_KEY` - Pour GPT-4 (recommandé)
-- `ANTHROPIC_API_KEY` - Pour Claude (alternative)
-
-### Utilisation
-
-#### Démo Interactive
-
-Lancez une conversation interactive en tant que prospect :
+### Running Tests
 
 ```bash
-python main.py demo
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov=agenticseller --cov-report=html
+
+# Run specific test file
+pytest tests/test_example.py
 ```
 
-#### Scénarios Prédéfinis
-
-Exécutez un des scénarios d'exemple :
+### Code Quality
 
 ```bash
-python main.py scenario pme_shadow_ia
-python main.py scenario eti_strategie_ia
-python main.py scenario formation_dirigeants
+# Format code
+black .
+isort .
+
+# Lint code
+ruff check .
+
+# Type checking
+mypy .
+
+# Security scan
+bandit -r agenticseller/
 ```
 
-Scénarios disponibles :
-- `pme_shadow_ia` - PME urgence Shadow IA
-- `eti_strategie_ia` - ETI stratégie complète
-- `formation_dirigeants` - Formation CODIR
-- `poc_souverain` - POC IA souveraine secteur santé
-- `objection_budget` - Négociation budget limité
-- `objection_timing` - Report de projet
-- `lead_froid` - Lead en veille simple
-- `escalade_grand_compte` - Grand compte nécessitant le fondateur
-- `conversion_rapide` - Conversion immédiate
-- `accompagnement_global` - Package complet sur plusieurs mois
+## CI/CD Pipeline
 
-Lister tous les scénarios :
-```bash
-python main.py list
-```
+This project uses GitHub Actions for continuous integration and deployment:
 
-## 📊 Exemple de Conversation
+### Continuous Integration (CI)
 
-```
-👤 PROSPECT : Bonjour, je suis le DG d'une PME de 80 personnes.
-             Mes équipes utilisent ChatGPT sans contrôle, je suis inquiet.
+The CI pipeline runs on every push and pull request:
 
-🔍 CLASSIFIER : [Analyse → Lead CHAUD, Industrie, PME, Score: 85/100]
-               Problématique : Shadow IA, sécurité données
+- **Linting & Formatting**: Checks code style with Ruff, Black, and isort
+- **Type Checking**: Static type analysis with mypy
+- **Testing**: Runs test suite across Python 3.9, 3.10, 3.11, and 3.12
+- **Code Coverage**: Generates coverage reports and uploads to Codecov
+- **Security Scanning**:
+  - Bandit for Python security issues
+  - Safety for dependency vulnerabilities
+  - CodeQL for advanced security analysis
+- **Build**: Validates package building
 
-💼 SELLER : Je comprends votre inquiétude, c'est un sujet critique.
-           IAfluence peut vous aider avec :
-           - Un diagnostic gratuit de 45 min avec Suan Tay
-           - Une cartographie des usages IA non contrôlés
-           - Des recommandations personnalisées
+### Continuous Deployment (CD)
 
-           Souhaitez-vous réserver un créneau ?
+Automated deployment workflows:
 
-👤 PROSPECT : Oui, c'est urgent. Je peux avoir un RDV cette semaine ?
+- **PyPI Deployment**: Publishes to PyPI on release
+- **Docker Images**: Builds and pushes to GitHub Container Registry
+- **Environment Deployments**:
+  - Staging: Auto-deploy from `develop` branch
+  - Production: Deploy from releases or manually trigger
 
-👨‍💼 SUPERVISOR : [Détecte → CONVERSION]
+### Additional Automations
 
-📊 CRM : Parfait ! Voici comment réserver :
-        - Calendrier : https://calendar.app.google/BcE52KKmVRmki1kZ8
-        - Email : suan.tay@iafluence.fr
-        - Téléphone : 06 65 19 76 33
-
-        Suan vous recontactera sous 24h !
-
-✅ RÉSULTAT : Converti | Score: 85/100 | 4 messages
-```
-
-## 💼 Offres IAfluence
-
-| Offre | Tarif | Description |
-|-------|-------|-------------|
-| **DIAGNOSTIC IA** | Gratuit / 490€ | Échange de 45 min, audit usages IA, recommandations |
-| **STRATÉGIE IA** | À partir de 3 500€ | Stratégie, charte IA, lutte Shadow IA (2-4 semaines) |
-| **FORMATION** | À partir de 1 500€/jour | Dirigeants, métiers, IT - présentiel ou distanciel |
-| **EXPERTISE TECHNIQUE** | À partir de 5 000€ | POC, infrastructure souveraine, déploiement LLM |
-| **ACCOMPAGNEMENT GLOBAL** | À partir de 2 500€/mois | Combinaison des 3 piliers, engagement 3 mois min |
-
-## 🔧 Configuration
-
-### Règles de Négociation
-
-Configurables dans `agents/negotiator.py` :
-- Remise maximum : 15% (engagement trimestriel/annuel)
-- Paiement échelonné : 3-4 mensualités possibles
-- Escalade automatique : après 3 tours de négociation
-- Diagnostic gratuit : toujours proposable
-
-### Critères de Qualification
-
-Configurables dans `agents/classifier.py` :
-- **Lead Chaud** (70-100) : Besoin urgent, décideur, budget identifié
-- **Lead Tiède** (40-69) : Intéressé, exploration, pas d'urgence
-- **Lead Froid** (0-39) : Curiosité, pas de projet, budget limité
-
-## 💾 Persistance
-
-Le système supporte deux modes de stockage :
-
-### Mémoire (Défaut)
-Rapide, pour tests et démos. Données perdues au redémarrage.
-
-### Fichiers JSON
-Stockage persistant sur disque.
+- **Dependency Updates**: Dependabot automatically creates PRs for dependency updates
+- **PR Labeling**: Automatic labeling based on file changes and PR size
+- **Dependency Review**: Security checks for new dependencies in PRs
 
 ```python
 from memory import set_memory_store, JSONFileStore
@@ -262,7 +195,20 @@ Documentation Swagger : http://localhost:8000/docs
 
 ```
 AgenticSellerPOC/
-├── agents/              # Agents spécialisés
+├── .github/
+│   ├── workflows/          # GitHub Actions workflows
+│   │   ├── ci.yml         # Main CI pipeline
+│   │   ├── cd.yml         # Deployment workflows
+│   │   ├── codeql.yml     # Security scanning
+│   │   ├── dependency-review.yml
+│   │   └── pr-labeler.yml
+│   ├── ISSUE_TEMPLATE/    # Issue templates
+│   ├── PULL_REQUEST_TEMPLATE/
+│   ├── dependabot.yml     # Dependabot configuration
+│   └── labeler.yml        # PR labeling rules
+├── agenticseller/         # Main package
+│   └── __init__.py
+├── tests/                 # Test suite
 │   ├── __init__.py
 │   ├── base.py         # Classe de base
 │   ├── classifier.py   # Qualification prospects
@@ -331,23 +277,20 @@ python main.py scenario objection_budget
 python main.py scenario escalade_grand_compte
 ```
 
-## 📈 Évolutions Futures
+## Contributing
 
-- [ ] Intégration base vectorielle pour mémoire sémantique
-- [ ] Intégration CRM réelle (HubSpot, Salesforce)
-- [ ] Dashboard analytics
-- [ ] Intégration email/SMS automatique
-- [ ] Webhook temps réel
-- [ ] A/B testing des offres
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Run tests and linting (`pytest && ruff check .`)
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
-## 🙏 Technologies
+## License
 
-Construit avec :
-- [LangGraph](https://github.com/langchain-ai/langgraph) - Orchestration multi-agents
-- [LangChain](https://github.com/langchain-ai/langchain) - Framework LLM
-- [OpenAI GPT-4](https://openai.com) - Modèle de langage
-- [Anthropic Claude](https://anthropic.com) - LLM alternatif
+This project is licensed under the MIT License - see the LICENSE file for details.
 
----
+## Support
 
-**IAfluence** - L'IA utile, au bon endroit, au bon rythme.
+For issues and questions, please use the [GitHub Issues](https://github.com/suaniafluence/AgenticSellerPOC/issues) page.

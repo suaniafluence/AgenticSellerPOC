@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - IAfluence{% endblock %}
+
+{% block body %}
+<div class="min-h-screen flex flex-col bg-gray-100">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-3 px-6 shadow-lg">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <a href="/" class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+                        <span class="text-purple-600 font-bold">IA</span>
+                    </div>
+                    <h1 class="text-xl font-bold">IAfluence</h1>
+                </a>
+            </div>
+            <div class="flex items-center space-x-4">
+                {% if user.picture %}
+                <img src="{{ user.picture }}" alt="{{ user.name }}" class="w-8 h-8 rounded-full">
+                {% endif %}
+                <span class="text-sm hidden md:inline">{{ user.name or user.email }}</span>
+                <a href="/logout" class="text-white hover:text-gray-200 text-sm">
+                    Deconnexion
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white shadow-md hidden md:block">
+            <div class="p-4">
+                <button id="newChatBtn" class="w-full bg-purple-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-purple-700 transition flex items-center justify-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    <span>Nouvelle conversation</span>
+                </button>
+            </div>
+            <div class="px-4 py-2">
+                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Session actuelle</h3>
+                <div id="sessionInfo" class="text-sm text-gray-600 space-y-1">
+                    <p>Aucune session active</p>
+                </div>
+            </div>
+            <div class="px-4 py-4 border-t">
+                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Statistiques</h3>
+                <div id="statsPanel" class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Type de lead:</span>
+                        <span id="leadType" class="font-medium">-</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Score:</span>
+                        <span id="leadScore" class="font-medium">0/100</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Qualifie:</span>
+                        <span id="qualified" class="font-medium">-</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Converti:</span>
+                        <span id="converted" class="font-medium">-</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Chat Area -->
+        <div class="flex-grow flex flex-col">
+            <!-- Messages -->
+            <div id="chatMessages" class="flex-grow overflow-y-auto p-4 space-y-4">
+                <!-- Welcome message -->
+                <div class="chat-message flex justify-center">
+                    <div class="bg-white rounded-xl p-6 shadow-sm max-w-2xl text-center">
+                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-3xl">&#128075;</span>
+                        </div>
+                        <h2 class="text-xl font-semibold text-gray-800 mb-2">Bienvenue sur IAfluence</h2>
+                        <p class="text-gray-600">Je suis votre assistant commercial IA. Posez-moi des questions sur nos services de transformation IA pour PME et ETI.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="bg-white border-t p-4">
+                <div class="max-w-4xl mx-auto">
+                    <form id="chatForm" class="flex space-x-4">
+                        <input
+                            type="text"
+                            id="messageInput"
+                            placeholder="Tapez votre message..."
+                            class="flex-grow px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            autocomplete="off"
+                        >
+                        <button
+                            type="submit"
+                            id="sendBtn"
+                            class="bg-purple-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-purple-700 transition flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <span>Envoyer</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const chatMessages = document.getElementById('chatMessages');
+    const chatForm = document.getElementById('chatForm');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const newChatBtn = document.getElementById('newChatBtn');
+
+    let sessionId = null;
+    let isLoading = false;
+
+    const agentEmojis = {
+        'classifier': '&#128269;',
+        'seller': '&#128188;',
+        'negotiator': '&#129309;',
+        'supervisor': '&#128104;&#8205;&#128188;',
+        'crm': '&#128202;',
+        'assistant': '&#129302;'
+    };
+
+    const agentColors = {
+        'classifier': 'bg-blue-100 border-blue-300',
+        'seller': 'bg-green-100 border-green-300',
+        'negotiator': 'bg-yellow-100 border-yellow-300',
+        'supervisor': 'bg-purple-100 border-purple-300',
+        'crm': 'bg-red-100 border-red-300',
+        'assistant': 'bg-gray-100 border-gray-300'
+    };
+
+    function addMessage(content, isUser, agent = 'assistant') {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'chat-message flex ' + (isUser ? 'justify-end' : 'justify-start');
+
+        const emoji = agentEmojis[agent] || agentEmojis['assistant'];
+        const colorClass = agentColors[agent] || agentColors['assistant'];
+
+        if (isUser) {
+            messageDiv.innerHTML = `
+                <div class="bg-purple-600 text-white rounded-xl px-4 py-3 max-w-2xl">
+                    ${escapeHtml(content)}
+                </div>
+            `;
+        } else {
+            messageDiv.innerHTML = `
+                <div class="${colorClass} border rounded-xl px-4 py-3 max-w-2xl">
+                    <div class="flex items-center space-x-2 mb-1">
+                        <span>${emoji}</span>
+                        <span class="text-xs font-semibold text-gray-600 uppercase">${agent}</span>
+                    </div>
+                    <div class="text-gray-800 whitespace-pre-wrap">${escapeHtml(content)}</div>
+                </div>
+            `;
+        }
+
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function addTypingIndicator() {
+        const typingDiv = document.createElement('div');
+        typingDiv.id = 'typingIndicator';
+        typingDiv.className = 'chat-message flex justify-start';
+        typingDiv.innerHTML = `
+            <div class="bg-gray-100 rounded-xl px-4 py-3">
+                <div class="typing-indicator flex space-x-1">
+                    <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                    <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                    <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                </div>
+            </div>
+        `;
+        chatMessages.appendChild(typingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) indicator.remove();
+    }
+
+    function updateStats(data) {
+        document.getElementById('leadType').textContent = data.lead_type || '-';
+        document.getElementById('leadScore').textContent = (data.lead_score || 0) + '/100';
+        document.getElementById('qualified').textContent = data.qualified ? 'Oui &#10003;' : 'Non';
+        document.getElementById('converted').textContent = data.converted ? 'Oui &#10003;' : 'Non';
+
+        // Update session info
+        document.getElementById('sessionInfo').innerHTML = `
+            <p class="truncate text-xs">${sessionId || 'Nouvelle session'}</p>
+        `;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    async function sendMessage(message) {
+        if (isLoading || !message.trim()) return;
+
+        isLoading = true;
+        sendBtn.disabled = true;
+        messageInput.disabled = true;
+
+        // Add user message
+        addMessage(message, true);
+        addTypingIndicator();
+
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: message,
+                    session_id: sessionId,
+                }),
+            });
+
+            removeTypingIndicator();
+
+            if (!response.ok) {
+                throw new Error('Erreur serveur');
+            }
+
+            const data = await response.json();
+            sessionId = data.session_id;
+
+            addMessage(data.response, false, data.agent);
+            updateStats(data);
+
+        } catch (error) {
+            removeTypingIndicator();
+            addMessage('Erreur: ' + error.message, false, 'assistant');
+        } finally {
+            isLoading = false;
+            sendBtn.disabled = false;
+            messageInput.disabled = false;
+            messageInput.focus();
+        }
+    }
+
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const message = messageInput.value.trim();
+        if (message) {
+            sendMessage(message);
+            messageInput.value = '';
+        }
+    });
+
+    newChatBtn.addEventListener('click', () => {
+        sessionId = null;
+        chatMessages.innerHTML = `
+            <div class="chat-message flex justify-center">
+                <div class="bg-white rounded-xl p-6 shadow-sm max-w-2xl text-center">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-3xl">&#128075;</span>
+                    </div>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-2">Nouvelle conversation</h2>
+                    <p class="text-gray-600">Posez-moi des questions sur nos services de transformation IA.</p>
+                </div>
+            </div>
+        `;
+        updateStats({});
+    });
+
+    // Focus input on load
+    messageInput.focus();
+</script>
+{% endblock %}
