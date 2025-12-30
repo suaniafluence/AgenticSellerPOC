@@ -126,7 +126,72 @@ Automated deployment workflows:
 - **PR Labeling**: Automatic labeling based on file changes and PR size
 - **Dependency Review**: Security checks for new dependencies in PRs
 
-## Project Structure
+```python
+from memory import set_memory_store, JSONFileStore
+
+set_memory_store(JSONFileStore("./data"))
+```
+
+## 🌐 Interface Web de Monitoring
+
+Le système inclut une interface web complète pour monitorer et configurer les agents.
+
+### Lancement de l'Interface Web
+
+```bash
+python run_web.py
+```
+
+Puis ouvrez votre navigateur sur http://localhost:8000
+
+### Fonctionnalités de l'Interface
+
+| Section | Description |
+|---------|-------------|
+| **Dashboard** | Vue d'ensemble : sessions, conversions, scores moyens |
+| **Sessions** | Liste et détail de toutes les conversations |
+| **Logs Agents** | Historique des actions de chaque agent en temps réel |
+| **Blackboard** | Mémoire partagée et insights collectés |
+| **Prompts** | Modification des prompts système de chaque agent |
+| **Configuration** | Choix du provider LLM (OpenAI, Claude, Grok, DeepSeek) et connexions MCP |
+| **Nouveau Prospect** | Formulaire d'insertion manuelle de prospects |
+
+### Configuration LLM
+
+Changez de provider LLM dynamiquement :
+- **OpenAI** : GPT-4, GPT-4 Turbo, GPT-4o, GPT-3.5 Turbo
+- **Anthropic** : Claude 3.5 Sonnet, Claude 3 Opus
+- **Grok (xAI)** : Grok 2, Grok Beta
+- **DeepSeek** : DeepSeek Chat, DeepSeek Coder
+
+### Connexions MCP
+
+Gérez les intégrations externes :
+- **HubSpot CRM** : Synchronisation des contacts et deals
+- **Gmail** : Envoi d'emails automatisés
+- **Google Drive** : Stockage de documents
+- **Accès Web** : Recherche internet
+- **LinkedIn** : Prospection sociale
+
+### API REST
+
+L'interface web expose une API REST complète :
+
+| Endpoint | Méthode | Description |
+|----------|---------|-------------|
+| `/api/sessions` | GET | Liste des sessions |
+| `/api/sessions/{id}` | GET | Détail d'une session |
+| `/api/logs` | GET | Logs des agents |
+| `/api/blackboard` | GET | État de la mémoire partagée |
+| `/api/prompts` | GET | Tous les prompts |
+| `/api/prompts/{agent}` | GET/PUT | Prompt d'un agent |
+| `/api/config` | GET/PUT | Configuration système |
+| `/api/prospects` | POST | Créer un prospect |
+| `/api/prospects/{id}/message` | POST | Envoyer un message |
+
+Documentation Swagger : http://localhost:8000/docs
+
+## 📁 Structure du Projet
 
 ```
 AgenticSellerPOC/
@@ -145,14 +210,71 @@ AgenticSellerPOC/
 │   └── __init__.py
 ├── tests/                 # Test suite
 │   ├── __init__.py
-│   └── test_example.py
-├── .dockerignore
-├── .gitignore
-├── Dockerfile
-├── pyproject.toml         # Project configuration
-├── requirements.txt       # Production dependencies
-├── requirements-dev.txt   # Development dependencies
-└── README.md
+│   ├── base.py         # Classe de base
+│   ├── classifier.py   # Qualification prospects
+│   ├── seller.py       # Création d'offres
+│   ├── negotiator.py   # Gestion objections
+│   ├── crm.py          # Intégration CRM
+│   └── supervisor.py   # Supervision processus
+├── web/                 # Interface web de monitoring
+│   ├── app.py          # Application FastAPI
+│   ├── models.py       # Modèles Pydantic API
+│   ├── templates/      # Templates HTML
+│   └── static/         # Fichiers statiques
+├── config.py           # Configuration
+├── state.py            # Gestion d'état
+├── memory.py           # Stockage mémoire
+├── orchestrator.py     # Orchestrateur LangGraph
+├── main.py             # Point d'entrée CLI
+├── run_web.py          # Point d'entrée Web
+├── examples.py         # Scénarios d'exemple
+├── requirements.txt    # Dépendances Python
+└── README.md           # Ce fichier
+```
+
+## 📞 Contact IAfluence
+
+**Suan Tay** - Fondateur & Consultant
+
+- 📧 Email : suan.tay@iafluence.fr
+- 📱 Téléphone : 06 65 19 76 33
+- 📅 Calendrier : https://calendar.app.google/BcE52KKmVRmki1kZ8
+
+---
+
+## 🛠️ Développement
+
+### Ajouter un Nouvel Agent
+
+1. Créer un fichier dans `agents/`
+2. Hériter de `BaseAgent`
+3. Implémenter la méthode `process(state)`
+4. Ajouter au graphe dans `orchestrator.py`
+5. Mettre à jour la logique de routage dans le MCP
+
+### Étendre l'État
+
+Ajouter de nouveaux champs à `SalesState` dans `state.py` :
+
+```python
+class SalesState(TypedDict):
+    # ... champs existants ...
+    votre_nouveau_champ: VotreType
+```
+
+## 🧪 Tests
+
+Lancer différents scénarios pour tester le comportement des agents :
+
+```bash
+# Tester la qualification
+python main.py scenario pme_shadow_ia
+
+# Tester la négociation
+python main.py scenario objection_budget
+
+# Tester l'escalade
+python main.py scenario escalade_grand_compte
 ```
 
 ## Contributing

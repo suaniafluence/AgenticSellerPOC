@@ -1,1 +1,1 @@
-"""Web application package for IAfluence Sales Agent."""
+"""Web interface for the IAfluence Agent Monitor."""

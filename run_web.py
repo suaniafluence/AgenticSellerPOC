@@ -1,27 +1,40 @@
 #!/usr/bin/env python3
-"""Run the IAfluence web application."""
-import os
+"""Run the IAfluence Agent Monitor web interface."""
 import uvicorn
-from dotenv import load_dotenv
+import sys
+from pathlib import Path
 
-load_dotenv()
+# Add the project root to the path
+project_root = Path(__file__).parent
+sys.path.insert(0, str(project_root))
 
-if __name__ == "__main__":
-    host = os.getenv("HOST", "0.0.0.0")
-    port = int(os.getenv("PORT", "8000"))
-    debug = os.getenv("DEBUG", "false").lower() == "true"
 
-    print("=" * 60)
-    print("  IAfluence Sales Agent - Web Application")
-    print("=" * 60)
-    print(f"  Server running at: http://{host}:{port}")
-    print(f"  Debug mode: {debug}")
-    print("=" * 60)
+def main():
+    """Start the web server."""
+    print("""
+    ╔═══════════════════════════════════════════════════════════╗
+    ║                                                           ║
+    ║     🤖 IAfluence Agent Monitor                            ║
+    ║                                                           ║
+    ║     Interface de monitoring et configuration              ║
+    ║     du système d'agents commerciaux                       ║
+    ║                                                           ║
+    ╚═══════════════════════════════════════════════════════════╝
+    """)
+
+    print("🚀 Démarrage du serveur sur http://localhost:8000")
+    print("📊 Dashboard: http://localhost:8000")
+    print("📚 API Docs: http://localhost:8000/docs")
+    print("\nAppuyez sur Ctrl+C pour arrêter le serveur\n")
 
     uvicorn.run(
         "web.app:app",
-        host=host,
-        port=port,
-        reload=debug,
-        log_level="info" if debug else "warning",
+        host="0.0.0.0",
+        port=8000,
+        reload=True,
+        log_level="info",
     )
+
+
+if __name__ == "__main__":
+    main()
