@@ -159,19 +159,51 @@ Puis ouvrez votre navigateur sur http://localhost:8000
 ### Configuration LLM
 
 Changez de provider LLM dynamiquement :
-- **OpenAI** : GPT-4, GPT-4 Turbo, GPT-4o, GPT-3.5 Turbo
-- **Anthropic** : Claude 3.5 Sonnet, Claude 3 Opus
-- **Grok (xAI)** : Grok 2, Grok Beta
-- **DeepSeek** : DeepSeek Chat, DeepSeek Coder
+
+**OpenAI (✅ Implémenté)** :
+- `gpt-4-turbo-preview` (par défaut)
+- `gpt-4`
+- `gpt-4o`
+- `gpt-4o-mini`
+- `gpt-3.5-turbo`
+
+**Anthropic (✅ Implémenté)** :
+- `claude-3-5-sonnet-20241022`
+- `claude-3-5-haiku-20241022`
+- `claude-3-opus-20240229`
+
+**Grok (⚠️ Modèles définis mais non implémenté)** :
+- `grok-beta`
+- `grok-2`
+
+**DeepSeek (⚠️ Modèles définis mais non implémenté)** :
+- `deepseek-chat`
+- `deepseek-coder`
 
 ### Connexions MCP
 
 Gérez les intégrations externes :
-- **HubSpot CRM** : Synchronisation des contacts et deals
-- **Gmail** : Envoi d'emails automatisés
-- **Google Drive** : Stockage de documents
-- **Accès Web** : Recherche internet
-- **LinkedIn** : Prospection sociale
+- **HubSpot CRM** : Synchronisation des contacts et deals (implémenté en mode mock)
+- **Gmail** : Envoi d'emails automatisés (désactivé par défaut)
+- **Google Drive** : Stockage de documents (désactivé par défaut)
+- **Accès Web** : Recherche internet (activé par défaut)
+- **LinkedIn** : Prospection sociale (désactivé par défaut)
+
+### Authentification Google OAuth
+
+L'interface web utilise Google OAuth 2.0 pour l'authentification :
+
+```bash
+# Configurer dans .env
+GOOGLE_CLIENT_ID=your-client-id
+GOOGLE_CLIENT_SECRET=your-client-secret
+SECRET_KEY=your-secret-key-for-sessions
+AUTHORIZED_EMAILS=email1@example.com,email2@example.com
+APP_URL=http://localhost:8000
+DATABASE_URL=sqlite+aiosqlite:///./data/users.db
+```
+
+Les utilisateurs doivent être dans la liste `AUTHORIZED_EMAILS` pour accéder à l'interface.
 
 ### API REST
 
@@ -206,30 +238,41 @@ AgenticSellerPOC/
 │   ├── PULL_REQUEST_TEMPLATE/
 │   ├── dependabot.yml     # Dependabot configuration
 │   └── labeler.yml        # PR labeling rules
-├── agenticseller/         # Main package
-│   └── __init__.py
+├── agents/                # Agents spécialisés
+│   ├── base.py           # Classe de base BaseAgent
+│   ├── classifier.py     # ProspectClassifier - Qualification prospects
+│   ├── seller.py         # SellerAgent - Création d'offres
+│   ├── negotiator.py     # NegotiatorAgent - Gestion objections
+│   ├── crm.py            # CRMAgent - Intégration CRM
+│   └── supervisor.py     # SupervisorAgent - Supervision processus
 ├── tests/                 # Test suite
 │   ├── __init__.py
-│   ├── base.py         # Classe de base
-│   ├── classifier.py   # Qualification prospects
-│   ├── seller.py       # Création d'offres
-│   ├── negotiator.py   # Gestion objections
-│   ├── crm.py          # Intégration CRM
-│   └── supervisor.py   # Supervision processus
-├── web/                 # Interface web de monitoring
-│   ├── app.py          # Application FastAPI
-│   ├── models.py       # Modèles Pydantic API
-│   ├── templates/      # Templates HTML
-│   └── static/         # Fichiers statiques
-├── config.py           # Configuration
-├── state.py            # Gestion d'état
-├── memory.py           # Stockage mémoire
-├── orchestrator.py     # Orchestrateur LangGraph
-├── main.py             # Point d'entrée CLI
-├── run_web.py          # Point d'entrée Web
-├── examples.py         # Scénarios d'exemple
-├── requirements.txt    # Dépendances Python
-└── README.md           # Ce fichier
+│   ├── conftest.py       # Pytest fixtures
+│   ├── test_agents.py    # Tests des agents
+│   ├── test_orchestrator.py  # Tests de l'orchestrateur
+│   ├── test_state.py     # Tests de l'état
+│   ├── test_memory.py    # Tests du stockage
+│   ├── test_web_app.py   # Tests de l'API web
+│   ├── test_web_auth.py  # Tests d'authentification
+│   ├── test_e2e.py       # Tests end-to-end
+│   └── test_example.py   # Tests des scénarios
+├── web/                   # Interface web de monitoring
+│   ├── app.py            # Application FastAPI
+│   ├── models.py         # Modèles Pydantic API
+│   ├── templates/        # Templates Jinja2
+│   │   └── dashboard.html
+│   └── static/           # Fichiers statiques (CSS, JS)
+├── config.py             # Configuration Pydantic
+├── state.py              # SalesState TypedDict
+├── memory.py             # InMemoryStore & JSONFileStore
+├── orchestrator.py       # SalesOrchestrator LangGraph + MCP
+├── main.py               # Point d'entrée CLI
+├── run_web.py            # Point d'entrée Web
+├── examples.py           # 10 scénarios de test
+├── .env.example          # Variables d'environnement
+├── requirements.txt      # Dépendances Python
+├── pyproject.toml        # Configuration du package
+└── README.md             # Ce fichier
 ```
 
 ## 📞 Contact IAfluence
@@ -262,19 +305,61 @@ class SalesState(TypedDict):
     votre_nouveau_champ: VotreType
 ```
 
-## 🧪 Tests
+## 🧪 Tests et Scénarios
 
-Lancer différents scénarios pour tester le comportement des agents :
+### Lancer des scénarios prédéfinis
+
+10 scénarios de vente réalistes sont disponibles :
 
 ```bash
-# Tester la qualification
+# Lister tous les scénarios
+python main.py list
+
+# PME avec usage ChatGPT non contrôlé
 python main.py scenario pme_shadow_ia
 
-# Tester la négociation
+# ETI cherchant une stratégie IA complète
+python main.py scenario eti_strategie_ia
+
+# Formation pour dirigeants
+python main.py scenario formation_dirigeants
+
+# POC pour solution souveraine
+python main.py scenario poc_souverain
+
+# Objection budgétaire
 python main.py scenario objection_budget
 
-# Tester l'escalade
+# Objection sur le timing
+python main.py scenario objection_timing
+
+# Lead froid en recherche
+python main.py scenario lead_froid
+
+# Escalade grand compte
 python main.py scenario escalade_grand_compte
+
+# Conversion rapide
+python main.py scenario conversion_rapide
+
+# Accompagnement global multi-mois
+python main.py scenario accompagnement_global
+```
+
+### Lancer les tests unitaires
+
+```bash
+# Tous les tests
+pytest
+
+# Avec coverage
+pytest --cov=agenticseller --cov-report=html
+
+# Tests spécifiques
+pytest tests/test_agents.py
+pytest tests/test_orchestrator.py
+pytest tests/test_web_app.py
+pytest tests/test_e2e.py
 ```
 
 ## Contributing

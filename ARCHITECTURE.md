@@ -182,16 +182,26 @@ def process(self, state: SalesState) -> SalesState:
 ```json
 {
     "lead_type": "hot",
-    "sector": "saas",
-    "company_size": "sme",
+    "sector": "tech",
+    "company_size": "pme",
+    "maturity": "explorateur",
     "decision_maker": true,
-    "pain_points": ["automation", "scaling"],
-    "interests": ["api", "integrations"],
+    "pain_points": ["shadow IT ChatGPT", "gouvernance IA", "formation équipes"],
+    "interests": ["stratégie IA", "accompagnement", "formation"],
     "lead_score": 85,
-    "reasoning": "...",
-    "key_insights": ["..."]
+    "reasoning": "PME tech mature avec budget et décideur, besoin urgent identifié",
+    "key_insights": ["Usage non contrôlé de ChatGPT", "Besoin de gouvernance IA"]
 }
 ```
+
+**Secteurs disponibles :**
+- `industrie`, `services`, `commerce`, `finance`, `sante`, `tech`, `immobilier`, `autre`
+
+**Tailles d'entreprise :**
+- `startup`, `pme`, `eti`, `grand_compte`
+
+**Niveaux de maturité :**
+- `debutant`, `explorateur`, `avance`
 
 **Next Action :**
 - Score ≥ 50 → `seller`
@@ -214,16 +224,33 @@ def process(self, state: SalesState) -> SalesState:
 **Output :**
 ```json
 {
-    "product": "PROFESSIONAL",
-    "price": 299,
-    "features": ["..."],
-    "discount": 15,
-    "trial_period": 14,
-    "commitment_period": 12,
-    "conditions": ["..."],
-    "pitch": "Based on your needs..."
+    "service": "STRATEGIE IA & GOUVERNANCE",
+    "price": 5000,
+    "engagement_type": "trimestriel",
+    "deliverables": [
+        "Audit complet usage IA",
+        "Politique de gouvernance",
+        "Plan de déploiement",
+        "Formation dirigeants"
+    ],
+    "discount": 10,
+    "payment_terms": "Facilités 3 ou 4 fois",
+    "duration": "3 mois",
+    "benefits": [
+        "Contrôle complet de l'usage IA",
+        "Conformité RGPD et sécurité",
+        "ROI mesuré et suivi"
+    ],
+    "pitch": "Compte tenu de votre besoin de gouvernance IA..."
 }
 ```
+
+**Services disponibles :**
+1. **DIAGNOSTIC** (Gratuit ou 490€)
+2. **STRATEGIE IA & GOUVERNANCE** (3,500€+)
+3. **FORMATION & MONTÉE EN COMPÉTENCES** (1,500€+/jour)
+4. **EXPERTISE TECHNIQUE & POC** (5,000€+)
+5. **ACCOMPAGNEMENT GLOBAL** (2,500€+/mois)
 
 **Next Action :** `wait_for_response`
 
@@ -246,22 +273,34 @@ def process(self, state: SalesState) -> SalesState:
    - TRUST : "Besoin de preuve"
 
 2. Stratégie de réponse :
-   - Prix : discount conditionnel, paiement échelonné
-   - Features : upsell, roadmap, alternatives
-   - Timing : urgence, offre limitée
-   - Autorité : matériel de vente, demo
+   - **BUDGET** : discount jusqu'à 15%, paiement en 3-4 fois, offre starter
+   - **TIMING** : urgence (places limitées), quick wins, pilote rapide
+   - **AUTORITE** : matériel décisionnel, case studies, démo
+   - **CONFIANCE** : références clients, certifications, garanties
+   - **CONCURRENCE** : différenciation valeur, expertise spécifique
+   - **TECHNIQUE** : détails techniques, POC, roadmap produit
 
 3. Ajustement de l'offre (dans les limites)
 
 **Output :**
 ```json
 {
-    "objection_category": "PRICE",
-    "adjusted_offer": {...},
-    "response": "I understand your budget concerns...",
-    "should_escalate": false
+    "objection_category": "BUDGET",
+    "adjusted_offer": {
+        "service": "STRATEGIE IA & GOUVERNANCE",
+        "price": 4500,
+        "discount": 10,
+        "payment_terms": "3 mensualités de 1500€",
+        "alternative_option": "DIAGNOSTIC PREMIUM à 490€ pour commencer"
+    },
+    "response": "Je comprends votre contrainte budgétaire. Nous pouvons proposer un paiement en 3 fois sans frais...",
+    "should_escalate": false,
+    "negotiation_strategy": "Facilités de paiement + discount modéré"
 }
 ```
+
+**Catégories d'objections :**
+- `BUDGET`, `TIMING`, `AUTORITE`, `CONFIANCE`, `CONCURRENCE`, `TECHNIQUE`
 
 **Next Action :**
 - Négociation count < 3 → `wait_for_response`

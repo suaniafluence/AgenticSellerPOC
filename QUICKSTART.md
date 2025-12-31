@@ -44,28 +44,39 @@ Vous pourrez discuter avec l'agent comme un vrai prospect.
 Testez avec des scénarios pré-programmés :
 
 ```bash
-# Lead chaud qui convertit rapidement
-python main.py scenario hot_lead
+# PME avec usage ChatGPT non contrôlé
+python main.py scenario pme_shadow_ia
 
-# Négociation sur le prix
-python main.py scenario price_negotiation
+# Négociation budgétaire
+python main.py scenario objection_budget
 
 # Deal enterprise complexe
-python main.py scenario enterprise_escalation
+python main.py scenario escalade_grand_compte
+
+# Conversion rapide
+python main.py scenario conversion_rapide
 ```
 
 ## 📋 Scénarios disponibles
 
+10 scénarios de vente IAfluence réalistes :
+
 | Scénario | Description | Complexité |
 |----------|-------------|-----------|
-| `hot_lead` | Conversion rapide | ⭐ Simple |
-| `price_negotiation` | Négociation de prix | ⭐⭐ Moyen |
-| `feature_concerns` | Questions sur features | ⭐⭐ Moyen |
-| `enterprise_escalation` | Deal complexe | ⭐⭐⭐ Avancé |
+| `pme_shadow_ia` | PME avec usage ChatGPT non contrôlé | ⭐⭐ Moyen |
+| `eti_strategie_ia` | ETI cherchant stratégie IA complète | ⭐⭐⭐ Avancé |
+| `formation_dirigeants` | Formation pour dirigeants | ⭐ Simple |
+| `poc_souverain` | POC pour solution souveraine | ⭐⭐⭐ Avancé |
+| `objection_budget` | Négociation budgétaire | ⭐⭐ Moyen |
+| `objection_timing` | Objection "pas maintenant" | ⭐⭐ Moyen |
+| `lead_froid` | Lead froid en recherche | ⭐ Simple |
+| `escalade_grand_compte` | Deal enterprise complexe | ⭐⭐⭐ Avancé |
+| `conversion_rapide` | Conversion rapide motivée | ⭐ Simple |
+| `accompagnement_global` | Accompagnement multi-mois | ⭐⭐⭐ Avancé |
 
-Liste complète :
+Liste complète avec descriptions :
 ```bash
-python examples.py
+python main.py list
 ```
 
 ## 🔑 Configuration minimale
@@ -73,14 +84,32 @@ python examples.py
 Fichier `.env` minimum :
 
 ```bash
-# Choisir UN des deux :
-OPENAI_API_KEY=sk-...        # Pour GPT-4
+# === LLM Configuration (choisir UN provider) ===
+OPENAI_API_KEY=sk-...                    # Pour GPT-4
 # OU
-ANTHROPIC_API_KEY=sk-ant-... # Pour Claude
+ANTHROPIC_API_KEY=sk-ant-...             # Pour Claude
 
-# Optionnel :
+# Modèle par défaut
 DEFAULT_LLM_MODEL=gpt-4-turbo-preview
 TEMPERATURE=0.7
+MAX_ITERATIONS=10
+
+# === CRM Intégrations (optionnel) ===
+HUBSPOT_API_KEY=your-hubspot-key
+SALESFORCE_API_KEY=your-salesforce-key
+
+# === Storage (optionnel) ===
+QDRANT_URL=http://localhost:6333
+QDRANT_API_KEY=your-qdrant-key
+REDIS_URL=redis://localhost:6379/0
+
+# === Web Auth (requis pour l'interface web) ===
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+SECRET_KEY=your-secret-session-key
+AUTHORIZED_EMAILS=email1@example.com,email2@example.com
+APP_URL=http://localhost:8000
+DATABASE_URL=sqlite+aiosqlite:///./data/users.db
 ```
 
 ## 🧪 Test rapide
@@ -126,34 +155,53 @@ Negotiation Rounds: 1              ← Rounds négo
 
 ```bash
 python main.py demo
-# Entrez : "Just browsing, no budget"
-# Résultat : Cold lead, non qualifié
+# Entrez : "Je cherche juste des infos, pas de budget pour l'instant"
+# Résultat : Lead froid, non qualifié
 ```
 
 ### Cas 2 : Tester la négociation
 
 ```bash
-python main.py scenario price_negotiation
-# Observe comment l'agent ajuste l'offre
+python main.py scenario objection_budget
+# Observe comment l'agent ajuste l'offre et propose des facilités de paiement
 ```
 
 ### Cas 3 : Tester l'escalade
 
 ```bash
-python main.py scenario enterprise_escalation
-# Vois quand l'agent escalade vers un humain
+python main.py scenario escalade_grand_compte
+# Vois quand l'agent escalade vers un humain pour un deal complexe
+```
+
+### Cas 4 : Tester la conversion rapide
+
+```bash
+python main.py scenario conversion_rapide
+# Observe une conversion rapide d'un lead chaud très motivé
 ```
 
 ## 🔧 Personnalisation rapide
 
-### Changer les produits
+### Changer les services offerts
 
 Éditez `agents/seller.py`, section "Available products" :
 
 ```python
 Available products:
-- STARTER: $99/month - Basic features
-- CUSTOM_PRODUCT: $499/month - Your features
+1. DIAGNOSTIC
+   - Gratuit ou 490€ (version premium)
+
+2. STRATEGIE IA & GOUVERNANCE
+   - À partir de 3,500€
+
+3. FORMATION & MONTÉE EN COMPÉTENCES
+   - À partir de 1,500€/jour
+
+4. EXPERTISE TECHNIQUE & POC
+   - À partir de 5,000€
+
+5. ACCOMPAGNEMENT GLOBAL
+   - À partir de 2,500€/mois
 ```
 
 ### Modifier les règles de négociation
@@ -227,32 +275,37 @@ Une fois familiarisé :
 
 **Lead chaud :**
 ```
-"I'm the CEO, we have $1000/month budget, need to start ASAP"
+"Je suis le PDG d'une PME de 50 personnes. On utilise ChatGPT partout sans contrôle et j'ai besoin d'une stratégie IA rapidement. Budget de 5000€/mois disponible."
 ```
 
 **Lead tiède :**
 ```
-"Interested in CRM, need to see features first"
+"On s'intéresse à l'IA générative pour notre service client. On aimerait en savoir plus sur vos formations."
 ```
 
 **Lead froid :**
 ```
-"Just looking around, no real need right now"
+"Je regarde juste ce qui existe en matière d'IA, pas de besoin immédiat."
 ```
 
-**Objection prix :**
+**Objection budget :**
 ```
-"Sounds good but too expensive for us"
+"Ça a l'air intéressant mais notre budget est limité à 2000€ pour le moment."
 ```
 
-**Objection features :**
+**Objection timing :**
 ```
-"Does it integrate with Salesforce? That's critical"
+"C'est intéressant mais on préfère attendre le prochain trimestre pour lancer ça."
+```
+
+**Objection autorité :**
+```
+"Je dois en parler avec mon comité de direction avant de décider."
 ```
 
 **Conversion :**
 ```
-"Perfect! Let's do it, sign me up"
+"Parfait, exactement ce qu'il nous faut ! On peut démarrer quand ?"
 ```
 
 ---
