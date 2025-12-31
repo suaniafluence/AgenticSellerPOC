@@ -84,7 +84,7 @@ PROBLÉMATIQUES IA TYPIQUES :
 - Intégration : besoin de POC ou déploiement technique
 
 Réponds UNIQUEMENT avec un JSON valide dans ce format exact :
-{
+{{
     "lead_type": "chaud|tiede|froid",
     "sector": "industrie|services|commerce|finance|sante|tech|immobilier|autre",
     "company_size": "startup|pme|eti|grand_compte",
@@ -96,7 +96,7 @@ Réponds UNIQUEMENT avec un JSON valide dans ce format exact :
     "reasoning": "Explication brève de la classification",
     "key_insights": ["insight1", "insight2"],
     "offre_recommandee": "DIAGNOSTIC|STRATEGIE|FORMATION|EXPERTISE|ACCOMPAGNEMENT_GLOBAL"
-}"""
+}}"""
 
     def process(self, state: Dict[str, Any]) -> Dict[str, Any]:
         """Classify the prospect based on their message."""

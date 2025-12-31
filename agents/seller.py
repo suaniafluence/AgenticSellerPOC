@@ -74,7 +74,7 @@ INCITATIONS POSSIBLES :
 - POC pilote à tarif réduit pour tester l'approche
 
 Réponds avec un JSON valide dans ce format :
-{
+{{
     "offre": "DIAGNOSTIC|STRATEGIE|FORMATION|EXPERTISE|ACCOMPAGNEMENT_GLOBAL",
     "tarif": montant_en_euros,
     "duree": "durée estimée",
@@ -85,7 +85,7 @@ Réponds avec un JSON valide dans ce format :
     "conditions": ["condition1"],
     "pitch": "Texte de proposition commerciale personnalisée",
     "reasoning": "Pourquoi cette offre correspond à leurs besoins"
-}"""
+}}"""
 
     def process(self, state: Dict[str, Any]) -> Dict[str, Any]:
         """Create a personalized sales offer."""

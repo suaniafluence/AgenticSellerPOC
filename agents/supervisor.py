@@ -74,7 +74,7 @@ CONTINUER :
 - Action : Attendre plus d'input
 
 Réponds avec un JSON valide :
-{
+{{
     "analysis": "Analyse brève de la situation actuelle",
     "prospect_sentiment": "positif|neutre|negatif",
     "goal_achieved": true|false,
@@ -84,7 +84,7 @@ Réponds avec un JSON valide :
     "should_close": true|false,
     "reasoning": "Explication de ta décision",
     "recommended_action": "Ce qui devrait se passer ensuite"
-}"""
+}}"""
 
     def process(self, state: Dict[str, Any]) -> Dict[str, Any]:
         """Supervise the sales process and route to next agent."""
