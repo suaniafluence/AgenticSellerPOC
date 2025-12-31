@@ -72,11 +72,11 @@ CATÉGORIES D'OBJECTIONS :
   → Formation préalable, accompagnement progressif, évaluation maturité
 
 Réponds avec un JSON valide :
-{
+{{
     "objection_category": "BUDGET|TIMING|AUTORITE|CONFIANCE|CONCURRENCE|TECHNIQUE",
     "objection_summary": "Résumé bref de l'objection",
     "response_strategy": "Comment tu vas l'adresser",
-    "adjusted_offer": {
+    "adjusted_offer": {{
         "offre": "type d'offre ajustée",
         "tarif": tarif_ajusté,
         "remise": 0-15,
@@ -84,11 +84,11 @@ Réponds avec un JSON valide :
         "engagement": "ponctuel|trimestriel|annuel",
         "conditions": ["nouvelles conditions"],
         "contenu": ["éléments inclus"]
-    },
+    }},
     "response": "Ta réponse au prospect (conversationnelle et empathique)",
     "should_escalate": true|false,
     "escalation_reason": "Raison de l'escalade (si applicable)"
-}"""
+}}"""
 
     def process(self, state: Dict[str, Any]) -> Dict[str, Any]:
         """Handle objections and negotiate."""
