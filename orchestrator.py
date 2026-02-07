@@ -1,4 +1,5 @@
 """LangGraph orchestrator with MCP (Multi-Agent Control Plane) logic."""
+import re
 from typing import Literal
 from langgraph.graph import StateGraph, END
 from state import SalesState, create_initial_state, add_message
@@ -97,8 +98,8 @@ class SalesOrchestrator:
         if state.get("next_action") == "crm" or state.get("next_action") == "end":
             return state
 
-        # Check for explicit conversion
-        if self._check_for_conversion(state):
+        # Check for explicit conversion (only after an offer has been made)
+        if state.get("offers_made") and self._check_for_conversion(state):
             state["converted"] = True
             state["next_action"] = "crm"
             return state
@@ -168,22 +169,27 @@ class SalesOrchestrator:
         """Check if the prospect has converted based on their message."""
         current_message = state.get("current_message", "").lower()
 
-        # Positive conversion signals
+        # Positive conversion signals - use word boundary matching to avoid
+        # false positives (e.g. "ok" matching inside "TikTok")
         conversion_keywords = [
-            "yes", "sure", "ok", "okay", "let's do it", "let's go",
+            "yes", "sure", r"\bok\b", "okay", "let's do it", "let's go",
             "sign me up", "i'll take it", "sounds good", "deal",
-            "agreed", "accept", "i'm in", "let's start", "proceed"
+            "agreed", "accept", "i'm in", "let's start", "proceed",
+            "d'accord", "je suis intéressé", "allons-y", "banco",
+            "on y va", "je prends", "je signe", "c'est bon",
+            "ça marche", "parfait", "je valide", "on fonce",
         ]
 
-        return any(keyword in current_message for keyword in conversion_keywords)
+        return any(re.search(keyword, current_message) for keyword in conversion_keywords)
 
-    def run_conversation(self, initial_message: str, session_id: str = None) -> dict:
+    def run_conversation(self, initial_message: str, session_id: str = None, lead_info: dict = None) -> dict:
         """
         Run a complete sales conversation.
 
         Args:
             initial_message: The first message from the prospect
             session_id: Optional session ID (generates one if not provided)
+            lead_info: Optional lead info dict with prospect contact data
 
         Returns:
             Final state of the conversation
@@ -194,6 +200,12 @@ class SalesOrchestrator:
 
         # Create initial state
         state = create_initial_state(initial_message, session_id)
+
+        # Pre-populate lead_info with contact data from prospect form
+        if lead_info:
+            existing = state.get("lead_info", {})
+            existing.update({k: v for k, v in lead_info.items() if v is not None})
+            state["lead_info"] = existing
 
         # Add initial message to history
         add_message(state, "user", initial_message)
