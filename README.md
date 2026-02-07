@@ -5,17 +5,46 @@
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Agentic Seller Proof of Concept
+## Description
 
-## Features
+**AgenticSellerPOC** est une plateforme d'automatisation commerciale B2B propulsée par l'IA, conçue pour **IAfluence**, cabinet de conseil spécialisé en stratégie IA et gouvernance pour les PME et ETI.
 
-- 🚀 Modern Python project structure
-- 🔄 Complete CI/CD pipeline with GitHub Actions
-- 🧪 Automated testing with pytest
-- 📦 Docker support
-- 🔒 Security scanning with Bandit and CodeQL
-- 📊 Code coverage tracking
-- 🎨 Code formatting with Black and Ruff
+Le système utilise une **architecture multi-agents orchestrée par LangGraph** avec un plan de contrôle centralisé (MCP - Multi-Agent Control Plane) pour gérer intelligemment l'ensemble du cycle de vente :
+
+### Fonctionnement
+
+```
+Prospect → [MCP] → Classification → Offre personnalisée → Négociation → Finalisation CRM
+```
+
+1. **ProspectClassifier** : Qualifie et score les leads (HOT/WARM/COLD), identifie le secteur, la taille d'entreprise, la maturité IA et les pain points
+2. **SellerAgent** : Génère des offres commerciales personnalisées parmi 5 packages de services (Diagnostic, Stratégie IA & Gouvernance, Formation, Expertise Technique & POC, Accompagnement Global)
+3. **NegotiatorAgent** : Gère les objections (budget, timing, autorité, confiance, concurrence, technique) et ajuste les offres dans les limites autorisées
+4. **SupervisorAgent** : Analyse le sentiment, calcule la probabilité de conversion et route stratégiquement la conversation
+5. **CRMAgent** : Finalise les sessions, crée les enregistrements CRM et génère les tâches pour l'équipe commerciale
+
+### Principales capacités
+
+- Orchestration multi-agents avec routage centralisé intelligent via LangGraph
+- Qualification automatique des prospects avec scoring multi-dimensionnel (0-100)
+- Génération d'offres adaptées au profil et au budget du prospect
+- Gestion automatisée des objections avec stratégies de négociation (remises, facilités de paiement, alternatives)
+- Interface web de monitoring avec dashboard, logs temps réel et configuration dynamique
+- API REST complète avec authentification Google OAuth 2.0
+- Support multi-LLM (OpenAI GPT-4, Anthropic Claude)
+- 10 scénarios de vente prédéfinis pour les tests et démonstrations
+- Mémoire conversationnelle et analytique (InMemory / JSONFile)
+
+## Stack technique
+
+- **Orchestration IA** : LangGraph, LangChain, OpenAI, Anthropic
+- **Backend** : FastAPI, Uvicorn, Pydantic
+- **Frontend** : Jinja2, HTML/CSS/JS
+- **Données** : SQLite (aiosqlite), Redis (optionnel), Qdrant (optionnel)
+- **Tests** : pytest, pytest-asyncio, pytest-cov
+- **Qualité** : Black, Ruff, isort, mypy, Bandit
+- **CI/CD** : GitHub Actions, Docker, CodeQL
+- **Python** : 3.9+
 
 ## Installation
 
