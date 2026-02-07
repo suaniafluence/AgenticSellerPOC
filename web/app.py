@@ -154,6 +154,16 @@ def load_agent_prompts():
         "crm": "crm.py",
     }
 
+    # Default prompts for agents that don't have a get_system_prompt method
+    default_prompts = {
+        "crm": (
+            "Agent CRM IAfluence.\n"
+            "Enregistre les conversations, suit les opportunités, "
+            "met à jour les informations de contact et crée des tâches de suivi.\n"
+            "Synchronise les données avec le CRM (HubSpot) et génère les actions post-conversation."
+        ),
+    }
+
     for agent_name, filename in agent_files.items():
         # Check for custom prompt first
         custom_prompt_file = prompts_dir / f"{agent_name}_prompt.txt"
@@ -172,6 +182,11 @@ def load_agent_prompts():
                         end = content.find('"""', start)
                         if end != -1:
                             _prompts_cache[agent_name] = content[start:end].strip()
+                            continue
+
+            # Use default prompt if extraction failed
+            if agent_name not in _prompts_cache and agent_name in default_prompts:
+                _prompts_cache[agent_name] = default_prompts[agent_name]
 
 
 def save_agent_prompt(agent_name: str, prompt: str):
@@ -497,8 +512,21 @@ Notre entreprise compte environ {_size_to_employees(prospect.company_size)} empl
     try:
         orchestrator = get_orchestrator()
 
-        # Run the initial conversation
-        state = orchestrator.run_conversation(initial_message, session_id)
+        # Prepare lead_info from prospect input so contact data is preserved
+        prospect_lead_info = {
+            "name": prospect.name,
+            "company": prospect.company,
+            "email": prospect.email,
+            "phone": prospect.phone,
+            "sector": prospect.sector,
+            "company_size": prospect.company_size,
+            "decision_maker": prospect.decision_maker,
+            "pain_points": prospect.pain_points or [],
+            "interests": prospect.interests or [],
+        }
+
+        # Run the initial conversation with lead info
+        state = orchestrator.run_conversation(initial_message, session_id, lead_info=prospect_lead_info)
 
         # Log the action
         add_agent_log(
