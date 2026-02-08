@@ -1,0 +1,122 @@
+{
+  "session_id": "d2929ac4-8373-4138-8fa9-eab765620d15",
+  "timestamp": "2026-02-07T21:19:16.886101",
+  "lead_info": {
+    "name": "Audrey Aragnou",
+    "company": "Muséum Henri-Lecoq",
+    "email": "aaragnou@clermontmetropole.eu",
+    "phone": "",
+    "sector": "autre",
+    "company_size": "pme",
+    "budget": null,
+    "decision_maker": true,
+    "pain_points": [
+      "Moderniser l'expérience visiteur sans trahir la mission scientifique",
+      "Attirer les jeunes générations dans un musée à l'ère TikTok",
+      "Rendre la biodiversité locale émotionnellement urgente pour le public urbain",
+      "Enrichir la médiation culturelle avec l'IA sans remplacer l'humain",
+      "Déployer une solution 3D interactive + chatbot RAG personnalisé sur les contenus du musée"
+    ],
+    "interests": [
+      "3D interactive artworks",
+      "RAG chatbot personnalisé sur contenus du musée"
+    ],
+    "maturite_ia": "explorateur",
+    "offre_recommandee": "ACCOMPAGNEMENT_GLOBAL"
+  },
+  "lead_type": "tiede",
+  "lead_score": 62,
+  "qualified": true,
+  "converted": false,
+  "escalated": false,
+  "offers_made": [
+    {
+      "offre": "ACCOMPAGNEMENT_GLOBAL",
+      "tarif": 2500,
+      "duree": "3 mois minimum, renouvelable mensuellement",
+      "contenu": [
+        "Stratégie IA & Gouvernance adaptée au musée (missions, objectifs, risques, sécurité)",
+        "Charte IA et plan de lutte contre Shadow IA; trajectoire vers souveraineté IA si nécessaire",
+        "Prototype POC 3D interactive: conversion d'une œuvre 2D en modèle 3D manipulable par les visiteurs",
+        "RAG chatbot personnalisé, entraîné sur vos contenus validés (cartels, archives, notices scientifiques, médiation)",
+        "Infrastructures IA souveraines (serveurs dédiés), sécurité, traçabilité et conformité",
+        "Formation sur mesure pour dirigeants, métiers et IT (3 modules initiaux + sessions pratiques)",
+        "Accompagnement opérationnel et suivi (OKR, KPIs, feedback utilisateur) avec montée en compétence progressive",
+        "Chemin de montée en puissance et gouvernance continue pour garantir alignement mission et expérience visitorielle"
+      ],
+      "remise": 10,
+      "prochaine_etape": "proposition détaillée",
+      "engagement": "trimestriel",
+      "conditions": [
+        "Engagement minimum de 3 mois",
+        "Livrables clairs: roadmap, POC livré et démonstration, plan de formation, charte IA",
+        "Coordination dédiée avec Audrey Aragnou et l'équipe du musée",
+        "Conformité RGPD et protection des données du musée"
+      ]
+    },
+    {
+      "offre": "ACCOMPAGNEMENT_GLOBAL",
+      "tarif": 2500,
+      "duree": "à partir de 3 mois (cycle initial)",
+      "contenu": [
+        "Diagnostic IA initial (gratuit) pour cadrer les usages et la maturité",
+        "Stratégie IA & Gouvernance alignée avec la mission scientifique et les objectifs médiation",
+        "Conception et déploiement d'une solution 3D interactive des œuvres (rotation, zoom, exploration)",
+        "Intégration d'un RAG chatbot personnalisé, entraîné uniquement sur les contenus validés du musée",
+        "Cartographie du Shadow IA et plan de réduction avec trajectoire vers la souveraineté IA si nécessaire",
+        "POC ciblé sur 1 à 2 collections pour valider la valeur métier et l'expérience visiteur",
+        "Accompagnement global: formation des équipes (dirigeants, métiers, IT) et suivi mensuel",
+        "Formation et montée en compétences adaptée (cadres, médiation culturelle, IT)"
+      ],
+      "remise": 12,
+      "prochaine_etape": "Diagnostic IA gratuit et proposition détaillée suite à l'audit",
+      "engagement": "trimestriel",
+      "conditions": [
+        "Engagement minimum de 3 mois",
+        "Prix à partir de 2 500€/mois",
+        "Remise de 12% pour engagement trimestriel",
+        "POC pilote à tarif réduit selon périmètre"
+      ]
+    }
+  ],
+  "final_offer": {
+    "offre": "ACCOMPAGNEMENT_GLOBAL",
+    "tarif": 2500,
+    "duree": "à partir de 3 mois (cycle initial)",
+    "contenu": [
+      "Diagnostic IA initial (gratuit) pour cadrer les usages et la maturité",
+      "Stratégie IA & Gouvernance alignée avec la mission scientifique et les objectifs médiation",
+      "Conception et déploiement d'une solution 3D interactive des œuvres (rotation, zoom, exploration)",
+      "Intégration d'un RAG chatbot personnalisé, entraîné uniquement sur les contenus validés du musée",
+      "Cartographie du Shadow IA et plan de réduction avec trajectoire vers la souveraineté IA si nécessaire",
+      "POC ciblé sur 1 à 2 collections pour valider la valeur métier et l'expérience visiteur",
+      "Accompagnement global: formation des équipes (dirigeants, métiers, IT) et suivi mensuel",
+      "Formation et montée en compétences adaptée (cadres, médiation culturelle, IT)"
+    ],
+    "remise": 12,
+    "prochaine_etape": "Diagnostic IA gratuit et proposition détaillée suite à l'audit",
+    "engagement": "trimestriel",
+    "conditions": [
+      "Engagement minimum de 3 mois",
+      "Prix à partir de 2 500€/mois",
+      "Remise de 12% pour engagement trimestriel",
+      "POC pilote à tarif réduit selon périmètre"
+    ]
+  },
+  "objections": [],
+  "negotiation_rounds": 0,
+  "key_insights": [
+    "Décideur impliqué sur un projet IA muséal",
+    "Intérêt fort pour des solutions IA générative et 3D pour la médiation culturelle",
+    "Superviseur : Le prospect Audrey Aragnou, décideur au Muséum Henri-Lecoq, exprime une problématique claire autour de la modernisation de l'expérience visiteur via une solution 3D interactive et un chatbot RAG basé sur les contenus validés du musée. Lead qualifié (score 62, type tiede, décideur). Aucune objection exprimée, mais l'offre actuelle ne semble pas encore alignée sur ce besoin spécifique et un rendez-vous diagnostic n'a pas été demandé explicitement. Pas d escalade nécessaire pour l'instant; la proposition nécessite une personnalisation plus poussée.",
+    "Superviseur : Prospect exprimant un fort intérêt pour une solution 3D interactive des œuvres et un chatbot RAG personnalisé, aligné avec les offres déjà présentées. Aucune objection ni négociation en cours; lead qualifié (score 62). Pas de besoin d'escalade pour l'instant. Prochaine étape clé: organiser un diagnostic gratuit avec Suan Tay pour verrouiller les détails et avancer vers une prise de rendez-vous officielle."
+  ],
+  "sentiment": "positif",
+  "maturite_ia": "explorateur",
+  "conversation_summary": "🔥 QUALIFIÉ | Score: 62 | Maturité IA: explorateur | Offre reco: ACCOMPAGNEMENT_GLOBAL | Messages: 3",
+  "tasks": [
+    "📧 Envoyer email de suivi dans 3-5 jours",
+    "📚 Envoyer documentation adaptée au secteur",
+    "🎯 Contenu ciblé sur : Moderniser l'expérience visiteur sans trahir la mission scientifique, Attirer les jeunes générations dans un musée à l'ère TikTok"
+  ]
+}
