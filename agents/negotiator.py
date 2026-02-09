@@ -162,14 +162,7 @@ Fournis ta réponse de négociation au format JSON.""")
 
         # Parse response
         try:
-            content = response.content
-            # Remove markdown code blocks if present
-            if "```json" in content:
-                content = content.split("```json")[1].split("```")[0].strip()
-            elif "```" in content:
-                content = content.split("```")[1].split("```")[0].strip()
-
-            negotiation = json.loads(content)
+            negotiation = self.parse_llm_json(response.content)
 
             # Track objection
             objection_summary = negotiation.get("objection_summary", current_message)

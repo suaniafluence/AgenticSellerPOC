@@ -136,14 +136,7 @@ Crée une proposition personnalisée et convaincante au format JSON.""")
 
         # Parse response
         try:
-            content = response.content
-            # Remove markdown code blocks if present
-            if "```json" in content:
-                content = content.split("```json")[1].split("```")[0].strip()
-            elif "```" in content:
-                content = content.split("```")[1].split("```")[0].strip()
-
-            offer_data = json.loads(content)
+            offer_data = self.parse_llm_json(response.content)
 
             # Create offer
             offer = {

@@ -1,5 +1,6 @@
 """LangGraph orchestrator with MCP (Multi-Agent Control Plane) logic."""
 import re
+import time
 from typing import Literal
 from langgraph.graph import StateGraph, END
 from state import SalesState, create_initial_state, add_message
@@ -12,6 +13,15 @@ from agents import (
 )
 from memory import get_memory_store
 import uuid
+
+# Agent log callback — set by the web app to capture agent activity
+_agent_log_callback = None
+
+
+def set_agent_log_callback(callback):
+    """Set a callback for agent logging: callback(session_id, agent_name, action, input_state, output_state, duration_ms)."""
+    global _agent_log_callback
+    _agent_log_callback = callback
 
 
 class SalesOrchestrator:
@@ -135,25 +145,43 @@ class SalesOrchestrator:
         else:
             return "end"
 
+    def _run_agent_node(self, agent_name: str, agent, state: SalesState) -> SalesState:
+        """Run an agent node with logging."""
+        session_id = state.get("session_id", "")
+        input_snapshot = {"lead_score": state.get("lead_score", 0), "next_action": state.get("next_action")}
+        t0 = time.time()
+        state = agent.process(state)
+        duration_ms = (time.time() - t0) * 1000
+        if _agent_log_callback:
+            _agent_log_callback(
+                session_id=session_id,
+                agent_name=agent_name,
+                action="process",
+                input_state=input_snapshot,
+                output_state={"lead_score": state.get("lead_score", 0), "next_action": state.get("next_action"), "sentiment": state.get("sentiment")},
+                duration_ms=round(duration_ms),
+            )
+        return state
+
     def _classifier_node(self, state: SalesState) -> SalesState:
         """Prospect Classifier node."""
-        return self.classifier.process(state)
+        return self._run_agent_node("classifier", self.classifier, state)
 
     def _seller_node(self, state: SalesState) -> SalesState:
         """Seller node."""
-        return self.seller.process(state)
+        return self._run_agent_node("seller", self.seller, state)
 
     def _negotiator_node(self, state: SalesState) -> SalesState:
         """Negotiator node."""
-        return self.negotiator.process(state)
+        return self._run_agent_node("negotiator", self.negotiator, state)
 
     def _supervisor_node(self, state: SalesState) -> SalesState:
         """Supervisor node."""
-        return self.supervisor.process(state)
+        return self._run_agent_node("supervisor", self.supervisor, state)
 
     def _crm_node(self, state: SalesState) -> SalesState:
         """CRM node."""
-        state = self.crm.process(state)
+        state = self._run_agent_node("crm", self.crm, state)
 
         # Save to memory
         session_id = state.get("session_id", "")

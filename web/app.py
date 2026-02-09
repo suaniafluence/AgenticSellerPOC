@@ -24,7 +24,7 @@ from web.models import (
 )
 from config import config, Config
 from memory import get_memory_store, set_memory_store, JSONFileStore, InMemoryStore
-from orchestrator import SalesOrchestrator
+from orchestrator import SalesOrchestrator, set_agent_log_callback
 from state import create_initial_state, add_message
 
 
@@ -39,6 +39,7 @@ def get_orchestrator() -> SalesOrchestrator:
     """Get or create the orchestrator instance."""
     global _orchestrator
     if _orchestrator is None:
+        set_agent_log_callback(add_agent_log)
         _orchestrator = SalesOrchestrator()
     return _orchestrator
 
@@ -168,12 +169,12 @@ def load_agent_prompts():
         # Check for custom prompt first
         custom_prompt_file = prompts_dir / f"{agent_name}_prompt.txt"
         if custom_prompt_file.exists():
-            _prompts_cache[agent_name] = custom_prompt_file.read_text()
+            _prompts_cache[agent_name] = custom_prompt_file.read_text(encoding="utf-8")
         else:
             # Extract from source file
             agent_file = agents_dir / filename
             if agent_file.exists():
-                content = agent_file.read_text()
+                content = agent_file.read_text(encoding="utf-8")
                 # Extract system prompt from get_system_prompt method
                 if 'def get_system_prompt' in content:
                     start = content.find('return """', content.find('def get_system_prompt'))
@@ -465,7 +466,7 @@ def save_config_to_env(cfg: SystemConfig):
 
     # Read existing .env
     if env_file.exists():
-        env_content = env_file.read_text().split("\n")
+        env_content = env_file.read_text(encoding="utf-8").split("\n")
 
     # Update or add values
     updates = {
@@ -527,6 +528,10 @@ Notre entreprise compte environ {_size_to_employees(prospect.company_size)} empl
 
         # Run the initial conversation with lead info
         state = orchestrator.run_conversation(initial_message, session_id, lead_info=prospect_lead_info)
+
+        # Ensure session is saved in the memory store used by the web app
+        memory = get_memory_store()
+        memory.save_session(session_id, state)
 
         # Log the action
         add_agent_log(
@@ -608,6 +613,10 @@ async def send_message(session_id: str, request: Request):
     try:
         orchestrator = get_orchestrator()
         state = orchestrator.continue_conversation(session_id, message)
+
+        # Save updated session
+        memory = get_memory_store()
+        memory.save_session(session_id, state)
 
         # Get the last assistant message
         messages = state.get("messages", [])

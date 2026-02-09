@@ -1,4 +1,6 @@
 """Base agent class for all sales agents."""
+import json
+import re
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
 from langchain_core.language_models import BaseChatModel
@@ -70,6 +72,20 @@ class BaseAgent(ABC):
     def get_system_prompt(self) -> str:
         """Get the system prompt for this agent."""
         return f"You are {self.name}, a specialized AI agent in a sales system."
+
+    @staticmethod
+    def parse_llm_json(raw: str) -> dict:
+        """Parse JSON from LLM response, handling common issues like control characters."""
+        content = raw
+        if "```json" in content:
+            content = content.split("```json")[1].split("```")[0].strip()
+        elif "```" in content:
+            content = content.split("```")[1].split("```")[0].strip()
+
+        # Remove control characters inside JSON string values (newlines, tabs, etc.)
+        content = re.sub(r'[\x00-\x1f]+', ' ', content)
+
+        return json.loads(content)
 
     def format_conversation_history(self, messages: list) -> str:
         """Format conversation history for the LLM."""
