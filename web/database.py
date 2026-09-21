@@ -58,10 +58,21 @@ class UserSession(Base):
     is_active = Column(Boolean, default=True)
 
 
+def _ensure_sqlite_dir():
+    """Create the parent directory of the configured SQLite file, if any."""
+    if not sync_engine.url.drivername.startswith("sqlite"):
+        return
+    db_path = sync_engine.url.database
+    # ":memory:" (or no database at all) needs no directory
+    if not db_path or db_path == ":memory:":
+        return
+    parent = os.path.dirname(os.path.abspath(db_path))
+    os.makedirs(parent, exist_ok=True)
+
+
 def init_db():
     """Initialize the database and create tables."""
-    import os
-    os.makedirs("./data", exist_ok=True)
+    _ensure_sqlite_dir()
     Base.metadata.create_all(bind=sync_engine)
 
 

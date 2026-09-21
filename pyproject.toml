@@ -110,7 +110,19 @@ pythonpath = ["."]
 
 [tool.coverage.run]
 source = ["agenticseller"]
-omit = ["*/tests/*", "*/test_*.py"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    # Entry-point scripts: argparse/uvicorn wrappers around code that is
+    # covered through its own modules. Measuring them only reports on the
+    # __main__ plumbing, which unit tests are not meant to exercise.
+    "main.py",
+    "*/main.py",
+    "run_web.py",
+    "*/run_web.py",
+    "examples.py",
+    "*/examples.py",
+]
 
 [tool.coverage.report]
 exclude_lines = [

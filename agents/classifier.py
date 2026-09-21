@@ -163,7 +163,7 @@ Fournis ta classification au format JSON.""")
 
         except json.JSONDecodeError as e:
             print(f"Error parsing classifier response: {e}")
-            print(f"Response content: {content}")
+            print(f"Response content: {response.content}")
             # Set defaults if parsing fails
             state["qualified"] = False
             state["lead_score"] = 0

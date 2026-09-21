@@ -178,7 +178,7 @@ Fournis ton analyse et ta décision de routage au format JSON.""")
 
         except json.JSONDecodeError as e:
             print(f"Error parsing supervisor response: {e}")
-            print(f"Response content: {content}")
+            print(f"Response content: {response.content}")
             # Default: continue conversation
             state["next_action"] = "wait_for_response"
 

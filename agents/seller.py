@@ -172,7 +172,7 @@ Crée une proposition personnalisée et convaincante au format JSON.""")
 
         except json.JSONDecodeError as e:
             print(f"Error parsing seller response: {e}")
-            print(f"Response content: {content}")
+            print(f"Response content: {response.content}")
             # Fallback: add raw response as message
             state["messages"].append({
                 "role": "assistant",

@@ -215,12 +215,20 @@ class TestAuthenticatedUser:
 
     def test_user_defaults(self):
         """Test user default values."""
-        from web.database import AuthorizedUser
+        from web.database import AuthorizedUser, SyncSessionLocal
 
         user = AuthorizedUser(email="defaults@example.com")
 
-        assert user.is_admin is False
-        assert user.is_active is True
-        assert user.name is None
-        assert user.picture is None
-        assert user.last_login is None
+        # is_admin/is_active are column defaults, so they only materialise once
+        # the row is flushed to the database.
+        with SyncSessionLocal() as db:
+            db.add(user)
+            db.flush()
+
+            assert user.is_admin is False
+            assert user.is_active is True
+            assert user.name is None
+            assert user.picture is None
+            assert user.last_login is None
+
+            db.rollback()

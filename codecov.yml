@@ -1,0 +1,34 @@
+# Codecov configuration
+# Docs: https://docs.codecov.com/docs/codecov-yaml
+
+coverage:
+  # Badge colour scale, calibrated for this POC rather than left at Codecov's
+  # default of 70...100. Below 30% renders red, 45% and above renders green.
+  # This changes how the number is displayed, not the number itself — actual
+  # coverage is ~47%, and the gap is mostly web/app.py and orchestrator.py.
+  # Raise these bounds as real coverage improves.
+  range: "30...45"
+  precision: 1
+  round: down
+
+  status:
+    # Report coverage movement on pull requests without turning the check red.
+    # Flip `informational` to false once coverage is high enough to enforce a
+    # threshold worth failing on.
+    project:
+      default:
+        informational: true
+    patch:
+      default:
+        informational: true
+
+comment:
+  layout: "reach, diff, flags, files"
+  require_changes: false
+
+# Kept in sync with [tool.coverage.run] omit in pyproject.toml
+ignore:
+  - "tests/**"
+  - "main.py"
+  - "run_web.py"
+  - "examples.py"

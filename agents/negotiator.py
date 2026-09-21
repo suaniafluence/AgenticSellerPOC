@@ -93,7 +93,9 @@ Réponds avec un JSON valide :
     def process(self, state: Dict[str, Any]) -> Dict[str, Any]:
         """Handle objections and negotiate."""
         current_message = state.get("current_message", "")
-        current_offer = state.get("current_offer", {})
+        # create_initial_state() sets current_offer to None, so the key exists
+        # and the `.get` default never kicks in — normalise it explicitly.
+        current_offer = state.get("current_offer") or {}
         objections = state.get("objections", [])
         negotiation_count = state.get("negotiation_count", 0)
         lead_info = state.get("lead_info", {})
@@ -204,7 +206,7 @@ Fournis ta réponse de négociation au format JSON.""")
 
         except json.JSONDecodeError as e:
             print(f"Error parsing negotiator response: {e}")
-            print(f"Response content: {content}")
+            print(f"Response content: {response.content}")
             # Fallback: add raw response
             state["messages"].append({
                 "role": "assistant",
