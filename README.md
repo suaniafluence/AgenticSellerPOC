@@ -290,7 +290,6 @@ AgenticSellerPOC/
 │   ├── test_orchestrator.py  # Tests de l'orchestrateur
 │   ├── test_state.py     # Tests de l'état
 │   ├── test_memory.py    # Tests du stockage
-│   ├── test_web_app.py   # Tests de l'API web
 │   ├── test_web_auth.py  # Tests d'authentification
 │   ├── test_e2e.py       # Tests end-to-end
 │   └── test_example.py   # Tests des scénarios
@@ -396,7 +395,6 @@ pytest --cov=agenticseller --cov-report=html
 # Tests spécifiques
 pytest tests/test_agents.py
 pytest tests/test_orchestrator.py
-pytest tests/test_web_app.py
 pytest tests/test_e2e.py
 ```
 
