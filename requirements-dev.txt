@@ -18,5 +18,5 @@ safety>=2.3.0
 
 # Build tools
 build>=1.0.0
-wheel>=0.41.0
+wheel>=0.48.0
 twine>=4.0.0
