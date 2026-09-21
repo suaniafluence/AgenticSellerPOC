@@ -5,16 +5,30 @@
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+> Multi-agent B2B sales platform — LangGraph · FastAPI · OpenAI/Anthropic · Docker · CI/CD
+
+```mermaid
+flowchart LR
+    P[Prospect] --> O{Orchestrateur<br/>LangGraph}
+    O --> C[ProspectClassifier<br/>scoring HOT/WARM/COLD]
+    C --> S[SellerAgent<br/>offre personnalisée]
+    S --> N[NegotiatorAgent<br/>gestion des objections]
+    N --> V[SupervisorAgent<br/>sentiment & routage]
+    V -->|relance| S
+    V --> R[CRMAgent<br/>finalisation & tâches]
+    O -.-> M[(Mémoire / état partagé)]
+```
+
 ## Description
 
 **AgenticSellerPOC** est une plateforme d'automatisation commerciale B2B propulsée par l'IA, conçue pour **IAfluence**, cabinet de conseil spécialisé en stratégie IA et gouvernance pour les PME et ETI.
 
-Le système utilise une **architecture multi-agents orchestrée par LangGraph** avec un plan de contrôle centralisé (MCP - Multi-Agent Control Plane) pour gérer intelligemment l'ensemble du cycle de vente :
+Le système utilise une **architecture multi-agents orchestrée par LangGraph** avec un orchestrateur centralisé pour gérer intelligemment l'ensemble du cycle de vente :
 
 ### Fonctionnement
 
 ```
-Prospect → [MCP] → Classification → Offre personnalisée → Négociation → Finalisation CRM
+Prospect → [Orchestrateur LangGraph] → Classification → Offre personnalisée → Négociation → Finalisation CRM
 ```
 
 1. **ProspectClassifier** : Qualifie et score les leads (HOT/WARM/COLD), identifie le secteur, la taille d'entreprise, la maturité IA et les pain points
@@ -66,8 +80,9 @@ pip install -e .
 ### Using Docker
 
 ```bash
+cp .env.example .env   # renseigner les clés API (OPENAI_API_KEY, GOOGLE_CLIENT_ID, etc.)
 docker build -t agenticsellerpoc .
-docker run agenticsellerpoc
+docker run --env-file .env -p 8000:8000 agenticsellerpoc
 ```
 
 ## Development
@@ -154,12 +169,6 @@ Automated deployment workflows:
 - **Dependency Updates**: Dependabot automatically creates PRs for dependency updates
 - **PR Labeling**: Automatic labeling based on file changes and PR size
 - **Dependency Review**: Security checks for new dependencies in PRs
-
-```python
-from memory import set_memory_store, JSONFileStore
-
-set_memory_store(JSONFileStore("./data"))
-```
 
 ## 🌐 Interface Web de Monitoring
 
@@ -322,7 +331,7 @@ AgenticSellerPOC/
 2. Hériter de `BaseAgent`
 3. Implémenter la méthode `process(state)`
 4. Ajouter au graphe dans `orchestrator.py`
-5. Mettre à jour la logique de routage dans le MCP
+5. Mettre à jour la logique de routage dans l'orchestrateur central
 
 ### Étendre l'État
 
@@ -404,6 +413,25 @@ pytest tests/test_e2e.py
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## ⚠️ Known Issues & Limitations
+
+### CI/CD Pipeline
+- **Linting & Type Checking**: Configured with `continue-on-error: true` (warnings don't block merges) — enable strict mode in production
+- **Codecov**: Badge may show "unknown" if coverage reports aren't uploaded — configure codecov.yml for automated uploads
+- **Bandit Security Scan**: Runs but doesn't fail the pipeline — review security reports manually in artifacts
+
+### Unimplemented Features
+- **Grok Models** (`grok-beta`, `grok-2`): Defined in config but API integration not implemented
+- **DeepSeek Models** (`deepseek-chat`, `deepseek-coder`): Defined in config but API integration not implemented
+- **Gmail Integration**: Disabled by default, requires OAuth2 configuration
+- **Google Drive Integration**: Disabled by default, requires OAuth2 configuration
+- **LinkedIn Prospection**: Disabled by default, requires separate API keys
+- **HubSpot CRM**: Currently running in mock mode (no live data sync)
+
+### Test Coverage
+- Focus on agent logic and orchestration; full end-to-end coverage TBD
+- Web interface testing limited — manual testing recommended for UI changes
 
 ## Support
 
