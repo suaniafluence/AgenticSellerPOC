@@ -43,13 +43,13 @@ class TestProspectClassifier:
     @pytest.fixture
     def classifier(self, mock_llm):
         """Create classifier with mock LLM."""
-        with patch("agents.classifier.ChatOpenAI", return_value=mock_llm):
-            with patch("agents.classifier.ChatAnthropic", return_value=mock_llm):
+        with patch("agents.base.ChatOpenAI", return_value=mock_llm):
+            with patch("agents.base.ChatAnthropic", return_value=mock_llm):
                 return ProspectClassifier(llm=mock_llm)
 
     def test_classifier_initialization(self, classifier):
         """Test classifier is initialized correctly."""
-        assert classifier.name == "classifier"
+        assert classifier.name == "Prospect_Classifier"
 
     def test_process_sets_lead_type(self, classifier, sample_state, mock_llm):
         """Test that process sets lead type."""
@@ -98,12 +98,12 @@ class TestSellerAgent:
     @pytest.fixture
     def seller(self, mock_llm):
         """Create seller with mock LLM."""
-        with patch("agents.seller.ChatOpenAI", return_value=mock_llm):
+        with patch("agents.base.ChatOpenAI", return_value=mock_llm):
             return SellerAgent(llm=mock_llm)
 
     def test_seller_initialization(self, seller):
         """Test seller is initialized correctly."""
-        assert seller.name == "seller"
+        assert seller.name == "Seller"
 
     def test_process_creates_offer(self, seller, sample_hot_lead_state, mock_llm):
         """Test that seller creates an offer."""
@@ -128,12 +128,12 @@ class TestNegotiatorAgent:
     @pytest.fixture
     def negotiator(self, mock_llm):
         """Create negotiator with mock LLM."""
-        with patch("agents.negotiator.ChatOpenAI", return_value=mock_llm):
+        with patch("agents.base.ChatOpenAI", return_value=mock_llm):
             return NegotiatorAgent(llm=mock_llm)
 
     def test_negotiator_initialization(self, negotiator):
         """Test negotiator is initialized correctly."""
-        assert negotiator.name == "negotiator"
+        assert negotiator.name == "Negotiator"
 
     def test_handles_budget_objection(self, negotiator, sample_hot_lead_state, mock_llm):
         """Test handling budget objection."""
@@ -170,12 +170,12 @@ class TestCRMAgent:
     @pytest.fixture
     def crm_agent(self, mock_llm):
         """Create CRM agent with mock LLM."""
-        with patch("agents.crm.ChatOpenAI", return_value=mock_llm):
+        with patch("agents.base.ChatOpenAI", return_value=mock_llm):
             return CRMAgent(llm=mock_llm)
 
     def test_crm_initialization(self, crm_agent):
         """Test CRM agent is initialized correctly."""
-        assert crm_agent.name == "crm"
+        assert crm_agent.name == "CRM_Agent"
 
     def test_generates_crm_record(self, crm_agent, sample_hot_lead_state, mock_llm):
         """Test CRM record generation."""
@@ -203,12 +203,12 @@ class TestSupervisorAgent:
     @pytest.fixture
     def supervisor(self, mock_llm):
         """Create supervisor with mock LLM."""
-        with patch("agents.supervisor.ChatOpenAI", return_value=mock_llm):
+        with patch("agents.base.ChatOpenAI", return_value=mock_llm):
             return SupervisorAgent(llm=mock_llm)
 
     def test_supervisor_initialization(self, supervisor):
         """Test supervisor is initialized correctly."""
-        assert supervisor.name == "supervisor"
+        assert supervisor.name == "Supervisor"
 
     def test_routes_to_seller(self, supervisor, sample_hot_lead_state, mock_llm):
         """Test routing to seller agent."""
@@ -242,28 +242,24 @@ class TestAgentIntegration:
 
     def test_all_agents_have_process_method(self, mock_llm):
         """Verify all agents implement process method."""
-        with patch("agents.classifier.ChatOpenAI", return_value=mock_llm):
-            with patch("agents.seller.ChatOpenAI", return_value=mock_llm):
-                with patch("agents.negotiator.ChatOpenAI", return_value=mock_llm):
-                    with patch("agents.crm.ChatOpenAI", return_value=mock_llm):
-                        with patch("agents.supervisor.ChatOpenAI", return_value=mock_llm):
-                            agents = [
-                                ProspectClassifier(llm=mock_llm),
-                                SellerAgent(llm=mock_llm),
-                                NegotiatorAgent(llm=mock_llm),
-                                CRMAgent(llm=mock_llm),
-                                SupervisorAgent(llm=mock_llm),
-                            ]
+        with patch("agents.base.ChatOpenAI", return_value=mock_llm):
+            agents = [
+                ProspectClassifier(llm=mock_llm),
+                SellerAgent(llm=mock_llm),
+                NegotiatorAgent(llm=mock_llm),
+                CRMAgent(llm=mock_llm),
+                SupervisorAgent(llm=mock_llm),
+            ]
 
-                            for agent in agents:
-                                assert hasattr(agent, "process")
-                                assert callable(agent.process)
+            for agent in agents:
+                assert hasattr(agent, "process")
+                assert callable(agent.process)
 
     def test_agents_return_state_dict(self, mock_llm, sample_state):
         """Verify all agents return a state dictionary."""
         mock_llm.invoke.return_value = MagicMock(content="Test response")
 
-        with patch("agents.classifier.ChatOpenAI", return_value=mock_llm):
+        with patch("agents.base.ChatOpenAI", return_value=mock_llm):
             classifier = ProspectClassifier(llm=mock_llm)
             result = classifier.process(sample_state)
 

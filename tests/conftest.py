@@ -19,6 +19,11 @@ def mock_llm():
     """Mock LLM for testing without API calls."""
     mock = MagicMock()
     mock.invoke.return_value = MagicMock(content="Test response from LLM")
+    # Agents build chains with `prompt | self.llm`, and LangChain coerces a
+    # callable into a RunnableLambda, so the chain calls the mock directly
+    # instead of going through .invoke(). Route those calls to the same
+    # response, resolved lazily so per-test overrides are picked up.
+    mock.side_effect = lambda *args, **kwargs: mock.invoke.return_value
     return mock
 
 
@@ -100,13 +105,19 @@ def admin_user_data() -> Dict[str, Any]:
     }
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="session", autouse=True)
 def setup_test_dirs():
-    """Setup and cleanup test directories."""
+    """Setup and cleanup test directories.
+
+    Session-scoped on purpose: web.database builds its engines once at import
+    and keeps the SQLite connections pooled, so wiping this directory between
+    tests would leave them holding a deleted file and every later write would
+    fail with "attempt to write a readonly database".
+    """
     import shutil
     test_data_dir = "./test_data"
     os.makedirs(test_data_dir, exist_ok=True)
     yield
-    # Cleanup after tests
+    # Cleanup once the whole session is done
     if os.path.exists(test_data_dir):
         shutil.rmtree(test_data_dir)

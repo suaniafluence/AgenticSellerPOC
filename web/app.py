@@ -226,7 +226,7 @@ def add_agent_log(session_id: str, agent_name: str, action: str,
 @app.get("/", response_class=HTMLResponse)
 async def dashboard(request: Request):
     """Main dashboard page."""
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request, "index.html")
 
 
 # ============================================================================
